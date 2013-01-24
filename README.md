@@ -1,4 +1,4 @@
-ais-commons-web
+ais-commons-bean
 ===============
 
-Reusable components for building Web Applications
+Reusable components for Bean validation and proxying.
