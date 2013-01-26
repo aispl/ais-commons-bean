@@ -1,7 +1,6 @@
 package pl.ais.commons.bean.validation.constraints;
 
 import pl.ais.commons.bean.validation.Constraint;
-import pl.ais.commons.bean.validation.internal.DefaultConstraint;
 import pl.ais.commons.domain.specification.Specifications;
 
 /**
@@ -10,7 +9,7 @@ import pl.ais.commons.domain.specification.Specifications;
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
-public final class RequiredConstraint extends DefaultConstraint<Object> {
+public final class RequiredConstraint extends BaseConstraint<Object> {
 
     /**
      * Defines singleton instance of {@link RequiredConstraint}.

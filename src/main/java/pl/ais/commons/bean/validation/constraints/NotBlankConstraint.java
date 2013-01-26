@@ -1,7 +1,6 @@
 package pl.ais.commons.bean.validation.constraints;
 
 import pl.ais.commons.bean.validation.Constraint;
-import pl.ais.commons.bean.validation.internal.DefaultConstraint;
 import pl.ais.commons.domain.specification.Specifications;
 
 /**
@@ -10,7 +9,7 @@ import pl.ais.commons.domain.specification.Specifications;
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
-public final class NotBlankConstraint extends DefaultConstraint<CharSequence> {
+public final class NotBlankConstraint extends BaseConstraint<CharSequence> {
 
     /**
      * Defines singleton instance of {@link NotBlankConstraint}.
