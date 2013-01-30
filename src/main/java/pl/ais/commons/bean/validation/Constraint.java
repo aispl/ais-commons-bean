@@ -8,11 +8,27 @@ import pl.ais.commons.domain.specification.Specification;
 /**
  * Defines the API contract for constraint.
  *
+ * <p>
+ *     <strong>Note:</strong>
+ *     Although constraint extends {@link Specification}, it differs from majority of specifications, because calling
+ *     its {@link Specification#isSatisfiedBy(Object) isSatisfiedBy} method may in turn trigger Constrainable's
+ *     {@link Constrainable#notifyAboutViolation(pl.ais.commons.bean.validation.event.ConstraintViolationEvent) notifyAboutViolation}
+ *     method, thus using constraint for building composite specifications may not be a good idea.
+ *     In such cases you should use {@link #getDeterminant()} method result.
+ * </p>
+ *
  * @param <V> determines the type of constrainable value
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
 public interface Constraint<V> extends Specification<Constrainable<? extends V>> {
+
+    /**
+     * Returns the constraint determinant.
+     *
+     * @return the constraint determinant
+     */
+    Specification<V> getDeterminant();
 
     /**
      * Returns the message bound to this constraint.

@@ -26,8 +26,7 @@ public class BaseConstraint<V> implements Constraint<V> {
 
     private transient String name;
 
-    @SuppressWarnings("rawtypes")
-    private transient Specification specification;
+    private transient Specification<V> specification;
 
     /**
      * Constructs new instance.
@@ -42,7 +41,7 @@ public class BaseConstraint<V> implements Constraint<V> {
      * @param name the constraint name
      * @param specification the specification which should be satisfied
      */
-    public BaseConstraint(final String name, final Specification<?> specification) {
+    public BaseConstraint(final String name, final Specification<V> specification) {
         this();
         this.name = name;
         this.specification = specification;
@@ -54,7 +53,7 @@ public class BaseConstraint<V> implements Constraint<V> {
      * @param name the constraint name
      * @param specification the specification which should be satisfied
      */
-    protected BaseConstraint(final String name, final Specification<?> specification, final boolean active,
+    protected BaseConstraint(final String name, final Specification<V> specification, final boolean active,
         final String message, final Object... messageParameters) {
         this();
         this.active = active;
@@ -62,6 +61,14 @@ public class BaseConstraint<V> implements Constraint<V> {
         this.messageParameters = messageParameters;
         this.name = name;
         this.specification = specification;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Specification<V> getDeterminant() {
+        return specification;
     }
 
     /**
