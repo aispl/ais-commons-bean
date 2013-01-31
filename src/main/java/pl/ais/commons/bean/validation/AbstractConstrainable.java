@@ -42,8 +42,10 @@ abstract class AbstractConstrainable<V> implements Constrainable<V> {
      */
     @Override
     public void notifyAboutViolation(final ConstraintViolationEvent event) {
-        for (ValidationListener listener : listeners) {
-            listener.constraintViolated(event);
+        if (null != listeners) {
+            for (ValidationListener listener : listeners) {
+                listener.constraintViolated(event);
+            }
         }
     }
 
