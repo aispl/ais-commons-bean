@@ -10,6 +10,7 @@ import pl.ais.commons.bean.validation.constraints.mail.ValidEmailConstraint;
 import pl.ais.commons.domain.specification.Specification;
 import pl.ais.commons.domain.specification.Specifications;
 import pl.ais.commons.domain.specification.composite.AndSpecification;
+import pl.ais.commons.domain.specification.composite.NotSpecification;
 import pl.ais.commons.domain.specification.composite.OrSpecification;
 
 /**
@@ -126,7 +127,7 @@ public final class Constraints {
         // ... capitalizing the remainder, and adding it to the result name ...
         name[0] = Character.toUpperCase(name[0]);
         builder.append(name);
-        return new BaseConstraint<>(builder.toString(), constraint.getDeterminant());
+        return new BaseConstraint<>(builder.toString(), new NotSpecification<>(constraint.getDeterminant()));
     }
 
     /**
