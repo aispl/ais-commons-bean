@@ -2,16 +2,16 @@ package pl.ais.commons.bean.validation;
 
 import java.util.Arrays;
 
-import pl.ais.commons.bean.validation.constraints.BaseConstraint;
-import pl.ais.commons.bean.validation.constraints.EmptyConstraint;
-import pl.ais.commons.bean.validation.constraints.NotBlankConstraint;
-import pl.ais.commons.bean.validation.constraints.RequiredConstraint;
-import pl.ais.commons.bean.validation.constraints.mail.ValidEmailConstraint;
-import pl.ais.commons.domain.specification.Specification;
+import org.joda.money.BigMoneyProvider;
+
+import pl.ais.commons.bean.validation.constraint.EmptyConstraint;
+import pl.ais.commons.bean.validation.constraint.NotBlankConstraint;
+import pl.ais.commons.bean.validation.constraint.RequiredConstraint;
+import pl.ais.commons.bean.validation.constraint.composite.AllConstraint;
+import pl.ais.commons.bean.validation.constraint.composite.AnyConstraint;
+import pl.ais.commons.bean.validation.constraint.mail.ValidEmailConstraint;
 import pl.ais.commons.domain.specification.Specifications;
-import pl.ais.commons.domain.specification.composite.AndSpecification;
 import pl.ais.commons.domain.specification.composite.NotSpecification;
-import pl.ais.commons.domain.specification.composite.OrSpecification;
 
 /**
  * Provides set of useful {@link Constraint} implementations.
@@ -25,8 +25,8 @@ public final class Constraints {
      * @param bound the bound
      * @return constraint verifying if constrainable value is after predefined bound
      */
-    public static <T extends Comparable<T>> Constraint<T> after(final T bound) {
-        return new BaseConstraint<>("after", Specifications.after(bound));
+    public static <T extends Comparable<? super T>> Constraint<T> after(final T bound) {
+        return new Constraint<>("after", Specifications.after(bound));
     }
 
     /**
@@ -34,9 +34,9 @@ public final class Constraints {
      * @return specification of constrainable matching all given constraints
      */
     @SafeVarargs
-    public static <V> Specification<Constrainable<? extends V>> allConstraints(
-        final Specification<Constrainable<? extends V>>... constraints) {
-        return new AndSpecification<>(constraints);
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static <V> Constraint<? super V> allConstraints(final Constraint<? super V>... constraints) {
+        return new AllConstraint(false, constraints);
     }
 
     /**
@@ -44,17 +44,17 @@ public final class Constraints {
      * @return specification of constrainable matching any of given constraints
      */
     @SafeVarargs
-    public static <V> Specification<Constrainable<? extends V>> anyConstraint(
-        final Specification<Constrainable<? extends V>>... constraints) {
-        return new OrSpecification<>(constraints);
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static <V> Constraint<? super V> anyConstraint(final Constraint<? super V>... constraints) {
+        return new AnyConstraint(false, constraints);
     }
 
     /**
      * @param bound the bound
      * @return constraint verifying if constrainable value is before predefined bound
      */
-    public static <T extends Comparable<T>> Constraint<T> before(final T bound) {
-        return new BaseConstraint<>("before", Specifications.before(bound));
+    public static <T extends Comparable<? super T>> Constraint<T> before(final T bound) {
+        return new Constraint<>("before", Specifications.before(bound));
     }
 
     /**
@@ -71,15 +71,39 @@ public final class Constraints {
      */
     @SuppressWarnings("unchecked")
     public static <T extends CharSequence> Constraint<T> fitInto(final int upperLimit) {
-        return (Constraint<T>) new BaseConstraint<>("fitInto", Specifications.fitInto(upperLimit));
+        return (Constraint<T>) new Constraint<>("fitInto", Specifications.fitInto(upperLimit));
     }
 
     /**
      * @param bound the bound
      * @return constraint verifying if constrainable value is greater than given bound
      */
-    public static <T extends Number & Comparable<T>> Constraint<T> greaterThan(final T bound) {
-        return new BaseConstraint<>("greaterThan", Specifications.after(bound));
+    public static <T extends Number & Comparable<? super T>> Constraint<? super T> greaterThan(final T bound) {
+        return new Constraint<>("greaterThan", Specifications.after(bound));
+    }
+
+    /**
+     * @param bound the bound
+     * @return constraint verifying if constrainable value is greater than given bound
+     */
+    public static <T extends BigMoneyProvider & Comparable<? super T>> Constraint<T> greaterThan(final T bound) {
+        return new Constraint<>("greaterThan", Specifications.after(bound));
+    }
+
+    /**
+     * @param bound the bound
+     * @return constraint verifying if constrainable value is greater than or equal to the given bound
+     */
+    public static <T extends Number & Comparable<T>> Constraint<? super T> greaterThanOrEqualTo(final T bound) {
+        return new Constraint<>("greaterThanOrEqualTo", new NotSpecification<>(Specifications.before(bound)));
+    }
+
+    /**
+     * @param bound the bound
+     * @return constraint verifying if constrainable value is greater than or equal to the given bound
+     */
+    public static <T extends BigMoneyProvider & Comparable<? super T>> Constraint<T> greaterThanOrEqualTo(final T bound) {
+        return new Constraint<>("greaterThanOrEqualTo", new NotSpecification<>(Specifications.before(bound)));
     }
 
     /**
@@ -87,15 +111,39 @@ public final class Constraints {
      * @return constraint verifying if constrainable value is equal to predefined value
      */
     public static final <T> Constraint<T> isEqual(final T value) {
-        return new BaseConstraint<>("isEqual", Specifications.isEqual(value));
+        return new Constraint<>("isEqual", Specifications.isEqual(value));
     }
 
     /**
      * @param bound the bound
      * @return constraint verifying if constrainable value is less than given bound
      */
-    public static <T extends Number & Comparable<T>> Constraint<T> lessThan(final T bound) {
-        return new BaseConstraint<>("lessThan", Specifications.before(bound));
+    public static <T extends BigMoneyProvider & Comparable<? super T>> Constraint<T> lessThan(final T bound) {
+        return new Constraint<>("lessThan", Specifications.before(bound));
+    }
+
+    /**
+     * @param bound the bound
+     * @return constraint verifying if constrainable value is less than given bound
+     */
+    public static <T extends Number & Comparable<? super T>> Constraint<T> lessThan(final T bound) {
+        return new Constraint<>("lessThan", Specifications.before(bound));
+    }
+
+    /**
+     * @param bound the bound
+     * @return constraint verifying if constrainable value is less than or equal to the given bound
+     */
+    public static <T extends Number & Comparable<? super T>> Constraint<T> lessThanOrEqualTo(final T bound) {
+        return new Constraint<>("lessThanOrEqualTo", new NotSpecification<>(Specifications.after(bound)));
+    }
+
+    /**
+     * @param bound the bound
+     * @return constraint verifying if constrainable value is less than or equal to the given bound
+     */
+    public static <T extends BigMoneyProvider & Comparable<? super T>> Constraint<T> lessThanOrEqualTo(final T bound) {
+        return new Constraint<>("lessThanOrEqualTo", new NotSpecification<>(Specifications.after(bound)));
     }
 
     /**
@@ -103,7 +151,7 @@ public final class Constraints {
      * @return constraint verifying if constrainable value matches given regular expression
      */
     public static final Constraint<CharSequence> matches(final String regex) {
-        return new BaseConstraint<>("regex", Specifications.matches(regex));
+        return new Constraint<>("regex", Specifications.matches(regex));
     }
 
     /**
@@ -127,7 +175,7 @@ public final class Constraints {
         // ... capitalizing the remainder, and adding it to the result name ...
         name[0] = Character.toUpperCase(name[0]);
         builder.append(name);
-        return new BaseConstraint<>(builder.toString(), new NotSpecification<>(constraint.getDeterminant()));
+        return new Constraint<>(builder.toString(), new NotSpecification<>(constraint.getDeterminant()));
     }
 
     /**
@@ -148,8 +196,9 @@ public final class Constraints {
     /**
      * @return constraint verifying if string contains valid email address.
      */
-    public static final Constraint<String> validEmail() {
-        return ValidEmailConstraint.INSTANCE;
+    @SuppressWarnings("unchecked")
+    public static final <T extends CharSequence> Constraint<T> validEmail() {
+        return (Constraint<T>) ValidEmailConstraint.INSTANCE;
     }
 
     /**
