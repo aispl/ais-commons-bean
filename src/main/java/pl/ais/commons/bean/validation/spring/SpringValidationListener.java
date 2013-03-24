@@ -49,8 +49,7 @@ public class SpringValidationListener implements ValidationListener {
             public Void visit(final ConstrainableProperty<?> constrainable) {
                 final String message = constraint.getMessage();
                 final Object[] messageParameters = constraint.getMessageParameters();
-                errors.rejectValue(constrainable.getPathRepresentation(), constraint.getName(),
-                    constraint.getMessageParameters(),
+                errors.rejectValue(constrainable.getPathRepresentation(), constraint.getName(), messageParameters,
                     (null == message) ? null : MessageFormat.format(message, messageParameters));
                 return null;
             }
@@ -62,7 +61,8 @@ public class SpringValidationListener implements ValidationListener {
             public Void visit(final ConstrainableValue<?> constrainable) {
                 final String message = constraint.getMessage();
                 final Object[] messageParameters = constraint.getMessageParameters();
-                errors.reject(constraint.getName(), messageParameters, MessageFormat.format(message, messageParameters));
+                errors.reject(constraint.getName(), messageParameters,
+                    (null == message) ? null : MessageFormat.format(message, messageParameters));
                 return null;
             }
 
