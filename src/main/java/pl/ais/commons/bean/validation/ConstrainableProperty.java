@@ -2,6 +2,7 @@ package pl.ais.commons.bean.validation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 
 import pl.ais.commons.bean.util.Path;
 
@@ -12,6 +13,7 @@ import pl.ais.commons.bean.util.Path;
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
+@Immutable
 public final class ConstrainableProperty<V> extends AbstractConstrainable<V> {
 
     private transient final Path path;
@@ -19,10 +21,10 @@ public final class ConstrainableProperty<V> extends AbstractConstrainable<V> {
     /**
      * Constructs new instance.
      *
-     * @param path the property path
      * @param value the property value
+     * @param path the property path
      */
-    public ConstrainableProperty(@Nonnull final Path path, @Nullable final Object value) {
+    public ConstrainableProperty(@Nullable final V value, @Nonnull final Path path) {
         super(value);
         this.path = path;
     }
