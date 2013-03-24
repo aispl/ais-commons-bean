@@ -5,7 +5,6 @@ import javax.annotation.Nonnull;
 import pl.ais.commons.bean.facade.ObservableFacade;
 import pl.ais.commons.bean.facade.event.PropertyAccessTracker;
 import pl.ais.commons.bean.validation.event.ValidationListener;
-import pl.ais.commons.domain.specification.Specification;
 
 /**
  * Validation context.
@@ -21,14 +20,16 @@ public final class ValidationContext implements AutoCloseable {
      * @param constrainable the constrainable which will be decorated
      * @return decorated constrainable
      */
-    public static Validatable validateThat(final Constrainable<?> constrainable) {
+    @SuppressWarnings("rawtypes")
+    public static Validatable validateThat(final Constrainable constrainable) {
         return new Validatable() {
 
             /**
              * {@inheritDoc}
              */
+            @SuppressWarnings("unchecked")
             @Override
-            public boolean satisfies(final Specification constraint) {
+            public <V, C extends Constraint<V>> boolean satisfies(final C constraint) {
                 return constraint.isSatisfiedBy(constrainable);
             }
 
@@ -103,14 +104,14 @@ public final class ValidationContext implements AutoCloseable {
      * @param value the value which will be constrained
      * @return {@link Constrainable} for given value
      */
-    public <T> Constrainable<T> property(final Object value) {
+    public <T> Constrainable<T> property(final T value) {
         Constrainable<T> result;
         if (target instanceof ObservableFacade) {
-            result = new ConstrainableProperty<T>(tracker.getCurrentPath(), value).observedBy(listeners);
+            result = new ConstrainableProperty<>(value, tracker.getCurrentPath());
         } else {
-            result = new ConstrainableValue<T>(value).observedBy(listeners);
+            result = new ConstrainableValue<>(value);
         }
-        return result;
+        return result.observedBy(listeners);
     }
 
 }

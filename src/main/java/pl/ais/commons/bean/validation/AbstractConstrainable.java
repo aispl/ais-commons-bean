@@ -16,14 +16,14 @@ abstract class AbstractConstrainable<V> implements Constrainable<V> {
 
     private transient ValidationListener[] listeners;
 
-    private transient final Object value;
+    private transient final V value;
 
     /**
      * Constructs new instance.
      *
      * @param value constrained value
      */
-    protected AbstractConstrainable(@Nullable final Object value) {
+    protected AbstractConstrainable(@Nullable final V value) {
         super();
         this.value = value;
     }
@@ -31,10 +31,9 @@ abstract class AbstractConstrainable<V> implements Constrainable<V> {
     /**
      * @return the constrained value
      */
-    @SuppressWarnings("unchecked")
     @Override
     public V getValue() {
-        return (V) value;
+        return value;
     }
 
     /**
