@@ -1,4 +1,6 @@
-package pl.ais.commons.bean.validation.constraints;
+package pl.ais.commons.bean.validation.constraint;
+
+import javax.annotation.concurrent.Immutable;
 
 import pl.ais.commons.bean.validation.Constraint;
 import pl.ais.commons.domain.specification.Specifications;
@@ -9,7 +11,8 @@ import pl.ais.commons.domain.specification.Specifications;
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
-public final class RequiredConstraint extends BaseConstraint<Object> {
+@Immutable
+public final class RequiredConstraint extends Constraint<Object> {
 
     /**
      * Defines singleton instance of {@link RequiredConstraint}.
@@ -24,7 +27,7 @@ public final class RequiredConstraint extends BaseConstraint<Object> {
     /**
      * Constructs new instance.
      */
-    public RequiredConstraint() {
+    private RequiredConstraint() {
         super(NAME, Specifications.notNull());
     }
 }

@@ -1,7 +1,6 @@
-package pl.ais.commons.bean.validation.constraints.mail;
+package pl.ais.commons.bean.validation.constraint.mail;
 
 import pl.ais.commons.bean.validation.Constraint;
-import pl.ais.commons.bean.validation.constraints.BaseConstraint;
 import pl.ais.commons.domain.specification.Specifications;
 
 /**
@@ -10,12 +9,12 @@ import pl.ais.commons.domain.specification.Specifications;
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
-public class ValidEmailConstraint extends BaseConstraint<String> {
+public class ValidEmailConstraint extends Constraint<CharSequence> {
 
     /**
      * Defines singleton instance of {@link ValidEmailConstraint}.
      */
-    public static final Constraint<String> INSTANCE = new ValidEmailConstraint();
+    public static final Constraint<CharSequence> INSTANCE = new ValidEmailConstraint();
 
     /**
      * Defines the constraint name.

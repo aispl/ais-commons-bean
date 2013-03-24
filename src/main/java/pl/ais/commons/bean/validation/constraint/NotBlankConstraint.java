@@ -1,4 +1,6 @@
-package pl.ais.commons.bean.validation.constraints;
+package pl.ais.commons.bean.validation.constraint;
+
+import javax.annotation.concurrent.Immutable;
 
 import pl.ais.commons.bean.validation.Constraint;
 import pl.ais.commons.domain.specification.Specifications;
@@ -9,7 +11,8 @@ import pl.ais.commons.domain.specification.Specifications;
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
-public final class NotBlankConstraint extends BaseConstraint<CharSequence> {
+@Immutable
+public final class NotBlankConstraint extends Constraint<CharSequence> {
 
     /**
      * Defines singleton instance of {@link NotBlankConstraint}.
@@ -24,7 +27,8 @@ public final class NotBlankConstraint extends BaseConstraint<CharSequence> {
     /**
      * Constructs new instance.
      */
-    public NotBlankConstraint() {
+    private NotBlankConstraint() {
         super(NAME, Specifications.notBlank());
     }
+
 }
