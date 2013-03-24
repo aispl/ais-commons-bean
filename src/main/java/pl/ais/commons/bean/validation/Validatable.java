@@ -1,6 +1,6 @@
 package pl.ais.commons.bean.validation;
 
-import pl.ais.commons.domain.specification.Specification;
+import javax.annotation.Nonnull;
 
 /**
  * Defines the API contract for validatable value.
@@ -16,6 +16,6 @@ public interface Validatable {
      * @param constraint constraint which should be satisfied
      * @return {@code true} if constraint is satisfied by this validatable, {@code false} otherwise
      */
-    <V, C extends Specification<Constrainable<? extends V>>> boolean satisfies(C constraint);
+    <V, C extends Constraint<V>> boolean satisfies(@Nonnull C constraint);
 
 }
