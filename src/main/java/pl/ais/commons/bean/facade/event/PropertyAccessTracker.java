@@ -1,5 +1,8 @@
 package pl.ais.commons.bean.facade.event;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import pl.ais.commons.bean.util.Path;
@@ -11,6 +14,8 @@ import pl.ais.commons.bean.util.Path;
  * @since 1.0.1
  */
 public class PropertyAccessTracker implements MethodInvocationListener, PropertyAccessListener {
+
+    private static final Pattern INDEX_PATTERN = Pattern.compile("^\\[(.+)\\]$");
 
     private transient Path currentPath = Path.ROOT;
 
@@ -34,7 +39,13 @@ public class PropertyAccessTracker implements MethodInvocationListener, Property
      */
     @Override
     public void propertyAccess(final PropertyAccessEvent event) {
-        currentPath = currentPath.nestedPath(event.getPropertyName());
+        final String propertyName = event.getPropertyName();
+        final Matcher matcher = INDEX_PATTERN.matcher(propertyName);
+        if (matcher.matches()) {
+            currentPath = currentPath.forIndex(matcher.group(1));
+        } else {
+            currentPath = currentPath.nestedPath(propertyName);
+        }
     }
 
     /**
