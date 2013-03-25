@@ -1,5 +1,6 @@
 package pl.ais.commons.bean.facade;
 
+import java.io.Serializable;
 import java.util.EventListener;
 import java.util.EventObject;
 
@@ -13,7 +14,7 @@ import javax.annotation.Nullable;
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
-public interface ObservableFacade {
+public interface ObservableFacade extends Serializable {
 
     /**
      * Registers given listener as events' receiver.
