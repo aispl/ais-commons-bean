@@ -37,6 +37,16 @@ public class Path implements Serializable {
     }
 
     /**
+     * Creates and returns indexed path for current one.
+     *
+     * @param indexPath the indexed path
+     * @return newly created indexed path
+     */
+    public Path forIndex(final String indexPath) {
+        return new Path(parent, current + "[" + indexPath + "]");
+    }
+
+    /**
      * @return string representation of this path
      */
     public String getRepresentation() {
