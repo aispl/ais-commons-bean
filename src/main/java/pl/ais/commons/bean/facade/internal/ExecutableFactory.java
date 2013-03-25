@@ -2,6 +2,7 @@ package pl.ais.commons.bean.facade.internal;
 
 import java.lang.reflect.Method;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -25,7 +26,7 @@ interface ExecutableFactory {
      *        on the proxy instance, or {@code null} if interface method takes no arguments
      * @return newly created {@code Executable} instance
      */
-    @Nonnull
+    @CheckForNull
     Executable createExecutable(
         @Nonnull Object proxy, @Nonnull Method method, @Nullable MethodProxy methodProxy, @Nullable Object[] args);
 
