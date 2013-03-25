@@ -5,6 +5,7 @@ import java.util.EventObject;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -14,8 +15,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
+@Immutable
 @SuppressWarnings("PMD.BeanMembersShouldSerialize")
-public class PropertyAccessEvent extends EventObject {
+public final class PropertyAccessEvent extends EventObject {
 
     private final String propertyName;
 
