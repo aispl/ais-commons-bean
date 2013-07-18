@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -39,6 +40,9 @@ public class Constraint<V> implements Specification<Constrainable<V>> {
      */
     protected Constraint(@Nonnull final String name, @Nonnull final Specification<V> determinant) {
         super();
+        if ((null == name) || (null == determinant)) {
+            throw new IllegalArgumentException("Both constraint name and determinant cannot be null.");
+        }
         this.name = name;
         this.determinant = determinant;
     }
@@ -53,7 +57,7 @@ public class Constraint<V> implements Specification<Constrainable<V>> {
      * @param messageParameters the message parameters
      */
     private Constraint(@Nonnull final String name, @Nonnull final Specification<V> determinant, final boolean active,
-        final String message, final Object... messageParameters) {
+        @Nullable final String message, final Object... messageParameters) {
         this(name, determinant);
         this.active = active;
         this.message = message;
