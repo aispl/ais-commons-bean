@@ -1,5 +1,6 @@
 package pl.ais.commons.bean.facade.internal;
 
+import static pl.ais.commons.bean.facade.internal.ProxyHelper.defaultValueForMethod;
 import static pl.ais.commons.bean.facade.internal.ProxyHelper.defaultValueForType;
 import static pl.ais.commons.bean.facade.internal.ProxyHelper.proxyIfNeeded;
 
@@ -10,7 +11,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import net.sf.cglib.proxy.MethodProxy;
-import pl.ais.commons.bean.facade.Facade;
 import pl.ais.commons.bean.facade.ObservableFacade;
 import pl.ais.commons.bean.facade.event.PropertyAccessEvent;
 
@@ -46,18 +46,28 @@ final class PropertyAccessExecutableFactory extends AbstractPropertyAccessExecut
              */
             @Override
             public Object execute(final ExecutionContext context) throws Throwable {
+
+                // Try to read the property value from property store first, ...
                 final PropertyStore store = context.getPropertyStore();
                 Object propertyValue = store.getPropertyValue(propertyName);
+
+                // ... if no value has been found, try to guess default one ...
                 if (null == propertyValue) {
-                    propertyValue = defaultValueForType(method.getReturnType());
-                }
-                if ((null == propertyValue) && method.isAnnotationPresent(Nonnull.class)) {
-                    final Class<?> targetClass = method.getReturnType();
-                    if (ProxyHelper.isProxyable(targetClass)) {
-                        propertyValue = Facade.implementing(targetClass);
+                    propertyValue = defaultValueForMethod(method);
+                    if (null != propertyValue) {
+
+                        // ... process default value - bind to parent observable if possible, ...
+                        propertyValue = proxyIfNeeded(propertyValue);
+                        if ((proxy instanceof ObservableFacade) && (propertyValue instanceof ObservableFacade)) {
+                            ((ObservableFacade) propertyValue).setParent((ObservableFacade) proxy);
+                        }
+
+                        // ... put the default value into property store, ...
                         store.setPropertyValue(propertyName, propertyValue);
                     }
                 }
+
+                // ... propagate the property access event, and return the value to the caller.
                 context.multicastEvent(new PropertyAccessEvent(proxy, propertyName, propertyValue));
                 return propertyValue;
             }
