@@ -13,6 +13,8 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.Factory;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
+import pl.ais.commons.bean.facade.Facade;
+import pl.ais.commons.bean.facade.FacadeAdvice;
 import pl.ais.commons.bean.facade.ObservableFacade;
 
 /**
@@ -22,6 +24,36 @@ import pl.ais.commons.bean.facade.ObservableFacade;
  * @since
  */
 final class ProxyHelper {
+
+    public static Object defaultValueForMethod(final Method method) throws InstantiationException,
+        IllegalAccessException {
+        Object result = null;
+        processing: {
+            final Class<?> returnType = method.getReturnType();
+
+            // For primitive types different than void, we are able to determine default value returned by method
+            // very precisely ...
+            if (returnType.isPrimitive() && (void.class != returnType)) {
+                result = Array.get(Array.newInstance(returnType, 1), 0);
+                break processing;
+            }
+
+            // ... otherwise we rely on the additional info provided with annotations, ...
+            if (returnType.isInterface() && method.isAnnotationPresent(Nonnull.class)) {
+                final FacadeAdvice implementation = method.getAnnotation(FacadeAdvice.class);
+                if (null == implementation) {
+                    result = Facade.implementing(returnType);
+                } else {
+                    final Class<?> targetClass = implementation.targetClass();
+                    if (void.class != targetClass) {
+                        result = targetClass.newInstance();
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
 
     public static Object defaultValueForType(final Class<?> type) {
         Object result = null;
