@@ -1,163 +1,56 @@
 package pl.ais.commons.bean.validation;
 
-import java.util.Arrays;
+import pl.ais.commons.bean.validation.event.ConstraintViolated;
+import pl.ais.commons.bean.validation.event.ValidationListener;
 
-import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import pl.ais.commons.bean.validation.event.ConstraintViolationEvent;
-import pl.ais.commons.domain.specification.Specification;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 /**
- * Base class for all constraints.
+ * Defines the API contract for the Constraint.
  *
- * @param <V> determines the type of constrainable value
+ * @param <C> the type of constraint
+ * @param <T> the type of values supported by the constraint
  * @author Warlock, AIS.PL
- * @since 1.0.1
+ * @since 1.2.1
  */
-public class Constraint<V> implements Specification<Constrainable<V>> {
-
-    private transient boolean active = true;
-
-    private transient Specification<V> determinant;
-
-    private transient String message;
-
-    private transient Object[] messageParameters;
-
-    private transient String name;
+public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Constrainable<T>, ValidationListener, Boolean>, Predicate<T> {
 
     /**
-     * Constructs new instance.
+     * Verifies if given constrainable matches the constraint and reports violation if needed.
      *
-     * @param name the constraint name
-     * @param determinant the specification which should be satisfied
-     */
-    protected Constraint(@Nonnull final String name, @Nonnull final Specification<V> determinant) {
-        super();
-        if ((null == name) || (null == determinant)) {
-            throw new IllegalArgumentException("Both constraint name and determinant cannot be null.");
-        }
-        this.name = name;
-        this.determinant = determinant;
-    }
-
-    /**
-     * Constructs new instance.
-     *
-     * @param name the constraint name
-     * @param determinant the specification which should be satisfied
-     * @param active {@code true} if the constraint is active, {@code false} otherwise
-     * @param message default message which should be used if constraint is violated
-     * @param messageParameters the message parameters
-     */
-    private Constraint(@Nonnull final String name, @Nonnull final Specification<V> determinant, final boolean active,
-        @Nullable final String message, final Object... messageParameters) {
-        this(name, determinant);
-        this.active = active;
-        this.message = message;
-        this.messageParameters = messageParameters;
-    }
-
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @SuppressWarnings("rawtypes")
-    @Override
-    public boolean equals(final Object object) {
-        boolean result = (this == object);
-        if (!result && (null != object) && (getClass() == object.getClass())) {
-            final Constraint other = (Constraint) object;
-            result = new EqualsBuilder().append(name, other.name).append(determinant, other.determinant).isEquals();
-        }
-        return result;
-    }
-
-    /**
-     * Returns the constraint determinant.
-     *
-     * @return the constraint determinant
+     * @param constrainable the constrainable to be checked
+     * @param listener      the validation listener observing constraint violations
+     * @return {@code true} if given constrainable matches the constraint, {@code false} otherwise
      */
     @Nonnull
-    public Specification<V> getDeterminant() {
-        return determinant;
+    default Boolean apply(final Constrainable<T> constrainable, final ValidationListener listener) {
+        boolean matched = test(constrainable.getValue());
+        if (!matched) {
+            listener.constraintViolated(new ConstraintViolated(this, constrainable));
+        }
+        return matched;
     }
 
     /**
-     * Returns the message bound to this constraint.
-     *
-     * @return the message bound to this constraint (can be {@code null})
-     */
-    @CheckForNull
-    public String getMessage() {
-        return message;
-    }
-
-    /**
-     * Returns the parameters of message bound to this constraint.
-     *
-     * @return the parameters of message bound to this constraint
-     */
-    @CheckForNull
-    public Object[] getMessageParameters() {
-        return (null == messageParameters) ? null : Arrays.copyOf(messageParameters, messageParameters.length);
-    }
-
-    /**
-     * Returns the name of this constraint.
-     *
-     * @return the name of this constraint
-     */
-    @Nonnull
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(name).append(determinant).toHashCode();
-    }
-
-    /**
-     * Verifies if this constraint is active.
+     * Indicates if this constraint is active.
      *
      * @return {@code true} if this constraint is active, {@code false} otherwise
      */
-    public boolean isActive() {
-        return active;
-    }
+    boolean isActive();
 
     /**
-     * {@inheritDoc}
+     * Evaluates this constraint on the given argument.
+     *
+     * <p><strong>Note:</strong> disabled constraints are matched by any candidates. Use {@link #isActive()} method to
+     * properly handle this situation.</p>
+     *
+     * @param candidate value to be matched against this constraint
+     * @return {@code true} if given argument matches this constraint, {@code false} otherwise
      */
-    @Override
-    public <T extends Constrainable<V>> boolean isSatisfiedBy(final T candidate) {
-        boolean result = true;
-        if (active) {
-            if (!determinant.isSatisfiedBy(candidate.getValue())) {
-                result = false;
-                candidate.notifyAboutViolation(new ConstraintViolationEvent(this, candidate));
-            }
-        }
-        return result;
-    }
-
-    /**
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append("name", name).append("active", active)
-            .append("determinant", determinant).build();
-    }
+    boolean test(@Nullable T candidate);
 
     /**
      * Provides the constraint (de)activating method.
@@ -165,24 +58,18 @@ public class Constraint<V> implements Specification<Constrainable<V>> {
      * @param active defines if this constraint is active
      * @return constraint instance (for method invocation chaining)
      */
-    @SuppressWarnings("hiding")
     @Nonnull
-    public Constraint<V> when(final boolean active) {
-        return new Constraint<>(this.name, this.determinant, active, this.message, this.messageParameters);
-    }
+    C when(boolean active);
 
     /**
-     * Provides the message (potentially parameterized) which should be used to describe the constraint.
+     * Provides the message (potentially parametrized) which should be used to describe the constraint.
      *
-     * @param message the message (potentially parameterized)
+     * @param message           the message (potentially parametrized)
      * @param messageParameters the message parameters (if any)
      * @return constraint instance (for method invocation chaining)
      */
-    @SuppressWarnings("hiding")
     @Nonnull
-    public Constraint<V> withDescription(final String message, final Object... messageParameters) {
-        return new Constraint<>(this.name, this.determinant, this.active, message, messageParameters);
-    }
+    C withDescription(@Nonnull String message, Object... messageParameters);
 
     /**
      * Provides the message parameters which should be used to describe the constraint.
@@ -190,22 +77,7 @@ public class Constraint<V> implements Specification<Constrainable<V>> {
      * @param messageParameters the message parameters (if any)
      * @return constraint instance (for method invocation chaining)
      */
-    @SuppressWarnings("hiding")
     @Nonnull
-    public Constraint<V> withMessageParameters(final Object... messageParameters) {
-        return new Constraint<>(this.name, this.determinant, this.active, this.message, messageParameters);
-    }
-
-    /**
-     * Provides the new name for the constraint.
-     *
-     * @param name new constraint name
-     * @return constraint instance (for method invocation chaining)
-     */
-    @SuppressWarnings("hiding")
-    @Nonnull
-    public Constraint<V> withName(@Nonnull final String name) {
-        return new Constraint<>(name, this.determinant, this.active, this.message, this.messageParameters);
-    }
+    C withMessageParameters(Object... messageParameters);
 
 }

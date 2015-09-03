@@ -5,17 +5,19 @@ import javax.annotation.Nonnull;
 /**
  * Defines the API contract for validatable value.
  *
+ * @param <T> the type of the validatable values
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
-public interface Validatable {
+public interface Validatable<T> {
 
     /**
      * Verifies if this validatable satisfies given constraint.
      *
-     * @param constraint constraint which should be satisfied
+     * @param first constraint which should be satisfied
+     * @param rest  remaining constraints which should be satisfied
      * @return {@code true} if constraint is satisfied by this validatable, {@code false} otherwise
      */
-    <V, C extends Constraint<V>> boolean satisfies(@Nonnull C constraint);
+    boolean satisfies(@Nonnull Constraint<?, ? super T> first, Constraint<?, ? super T>... rest);
 
 }

@@ -1,11 +1,10 @@
 package pl.ais.commons.bean.validation.event;
 
+import javax.annotation.Nonnull;
 import java.util.EventListener;
 
-import javax.annotation.Nonnull;
-
 /**
- * Defines the API contract for validation listener.
+ * Defines the API contract for validation2 listener.
  *
  * @author Warlock, AIS.PL
  * @since 1.0.1
@@ -17,6 +16,6 @@ public interface ValidationListener extends EventListener {
      *
      * @param event describes the constraint violation
      */
-    void constraintViolated(@Nonnull ConstraintViolationEvent event);
+    void constraintViolated(@Nonnull ConstraintViolated event);
 
 }

@@ -1,41 +1,79 @@
 package pl.ais.commons.bean.validation;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-
-import pl.ais.commons.application.pattern.VisitorAcceptor;
-import pl.ais.commons.bean.validation.event.ConstraintViolationEvent;
-import pl.ais.commons.bean.validation.event.ValidationListener;
+import javax.annotation.concurrent.Immutable;
+import java.util.Objects;
 
 /**
- * Defines the API contract for constrainable.
+ * Defines the API contract for the value capable of being constrained.
  *
- * @param <V> determines the type of constrainable value
+ * @param <T> the type of the values being constrained
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
-public interface Constrainable<V> extends VisitorAcceptor<ConstrainableVisitor<?>> {
+@Immutable
+public final class Constrainable<T> {
+
+    private final String path;
+
+    private final T value;
 
     /**
-     * @return the constrainable value
-     */
-    @CheckForNull
-    V getValue();
-
-    /**
-     * Notifies the observers about the constraint violation.
+     * Constructs new instance.
      *
-     * @param event describes the constraint violation
+     * @param path  path identifying the value in current validation context
+     * @param value value to be constrained
      */
-    void notifyAboutViolation(@Nonnull ConstraintViolationEvent event);
+    public Constrainable(final String path, final T value) {
+        this.path = path;
+        this.value = value;
+    }
 
     /**
-     * Let the constrainable know that given observers are interested in the constraint violations.
-     *
-     * @param observers observers interested in the constraint violations
-     * @return this instance (for method invocation chaining)
+     * Indicates whether some other object is "equal to" this one.
      */
-    @Nonnull
-    Constrainable<V> observedBy(@Nonnull ValidationListener... observers);
+    @Override
+    public boolean equals(final Object object) {
+        boolean result = (this == object);
+        if (!result && (object instanceof Constrainable)) {
+            final Constrainable other = (Constrainable) object;
+            result = Objects.equals(path, other.path) && Objects.equals(value, other.value);
+        }
+        return result;
+    }
+
+    /**
+     * @return path identifying the value in current validation context
+     */
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * @return value itself
+     */
+    public T getValue() {
+        return value;
+    }
+
+    /**
+     * @return a hash code value for this constrainable value
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(path, value);
+    }
+
+    /**
+     * @return a String representation of this constrainable value
+     */
+    @Override
+    public String toString() {
+        return new StringBuilder().append("Constrainable value of '")
+                                  .append(value)
+                                  .append("' (")
+                                  .append(path)
+                                  .append(')')
+                                  .toString();
+    }
 
 }

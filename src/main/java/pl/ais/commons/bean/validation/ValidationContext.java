@@ -1,10 +1,13 @@
 package pl.ais.commons.bean.validation;
 
-import javax.annotation.Nonnull;
-
-import pl.ais.commons.bean.facade.ObservableFacade;
-import pl.ais.commons.bean.facade.event.PropertyAccessTracker;
+import pl.ais.commons.bean.facade.Facade;
+import pl.ais.commons.bean.facade.TraverseListener;
+import pl.ais.commons.bean.validation.event.ConstraintViolated;
 import pl.ais.commons.bean.validation.event.ValidationListener;
+import pl.ais.commons.domain.specification.Specifications;
+
+import javax.annotation.Nonnull;
+import java.util.Arrays;
 
 /**
  * Validation context.
@@ -12,28 +15,23 @@ import pl.ais.commons.bean.validation.event.ValidationListener;
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
-public final class ValidationContext implements AutoCloseable {
+public final class ValidationContext implements AutoCloseable, ValidationListener {
+
+    private final Object target;
+
+    private final TraverseListener traverseListener;
+
+    private ValidationListener[] listeners;
 
     /**
-     * Decorates the constrainable to allow its validation against some constraint.
+     * Constructs new instance.
      *
-     * @param constrainable the constrainable which will be decorated
-     * @return decorated constrainable
+     * @param object the object which will be validated
      */
-    @SuppressWarnings("rawtypes")
-    public static Validatable validateThat(final Constrainable constrainable) {
-        return new Validatable() {
-
-            /**
-             * {@inheritDoc}
-             */
-            @SuppressWarnings("unchecked")
-            @Override
-            public <V, C extends Constraint<V>> boolean satisfies(final C constraint) {
-                return constraint.isSatisfiedBy(constrainable);
-            }
-
-        };
+    private ValidationContext(final Object object) {
+        super();
+        traverseListener = new TraverseListener();
+        target = Facade.over(object, traverseListener);
     }
 
     /**
@@ -46,37 +44,21 @@ public final class ValidationContext implements AutoCloseable {
         return new ValidationContext(object);
     }
 
-    private transient ValidationListener[] listeners;
-
-    private final transient Object target;
-
-    private final transient PropertyAccessTracker tracker = new PropertyAccessTracker();
-
     /**
-     * Constructs new instance.
-     *
-     * @param object the object which will be validated
-     */
-    private ValidationContext(final Object object) {
-        super();
-        this.target = object;
-        if (target instanceof ObservableFacade) {
-            ((ObservableFacade) target).addListener(tracker);
-        }
-    }
-
-    /**
-     * @see java.lang.AutoCloseable#close()
+     * @see AutoCloseable#close()
      */
     @Override
     public void close() {
-        if (target instanceof ObservableFacade) {
-            ((ObservableFacade) target).removeListener(tracker);
-        }
+        // Do nothing ...
+    }
+
+    @Override
+    public void constraintViolated(@Nonnull final ConstraintViolated event) {
+        Arrays.stream(listeners).forEachOrdered(listeners -> listeners.constraintViolated(event));
     }
 
     /**
-     * Provides global validation listeners which will be used if there are no listeners defined
+     * Provides global validation2 listeners which will be used if there are no listeners defined
      * at the specific {@link Constrainable} level.
      *
      * @param listeners listeners watching the constraint violations
@@ -89,29 +71,30 @@ public final class ValidationContext implements AutoCloseable {
     }
 
     /**
+     * Decorates given value to allow its validation against some constraint.
+     *
+     * @param value the value which will be constrained
+     * @return decorated value
+     */
+    public <T> Validatable<T> validateThat(final T value) {
+        final Constrainable constrainable = new Constrainable(traverseListener.asPath(), value);
+        return (first, rest) -> first.apply(constrainable, this) && Arrays.stream(rest)
+                                                                          .map(constraint -> constraint.apply(constrainable, this))
+                                                                          .allMatch(Specifications.isEqual(true));
+    }
+
+    /**
      * Returns the nested path leading to the provided value.
      *
      * @param value the value
      * @return the nested path leading to the provided value
      */
     public String pathTo(final Object value) {
-        return tracker.getCurrentPath().getRepresentation();
+        return traverseListener.asPath();
     }
 
-    /**
-     * Converts given value into corresponding {@link Constrainable}.
-     *
-     * @param value the value which will be constrained
-     * @return {@link Constrainable} for given value
-     */
-    public <T> Constrainable<T> property(final T value) {
-        Constrainable<T> result;
-        if (target instanceof ObservableFacade) {
-            result = new ConstrainableProperty<>(value, tracker.getCurrentPath());
-        } else {
-            result = new ConstrainableValue<>(value);
-        }
-        return result.observedBy(listeners);
+    public <T> T subject() {
+        return (T) target;
     }
 
 }

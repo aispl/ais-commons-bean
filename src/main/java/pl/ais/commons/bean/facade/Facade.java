@@ -1,77 +1,55 @@
 package pl.ais.commons.bean.facade;
 
-import java.lang.reflect.Proxy;
-
+import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.Enhancer;
-import pl.ais.commons.bean.facade.internal.ProxyMethodHandler;
+import org.objenesis.ObjenesisHelper;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+
+import static pl.ais.commons.bean.facade.ClassPredicates.accessible;
+import static pl.ais.commons.bean.facade.ClassPredicates.inheritable;
+import static pl.ais.commons.bean.facade.ClassPredicates.is;
 
 /**
- * Provides set of utility methods for operating on facades.
- *
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
+@Immutable
 public final class Facade {
 
-    /**
-     * Adjusts the list of interfaces which should be implemented by the facade.
-     *
-     * <p>
-     *     <strong>Note:</strong>
-     *     This method adds new interfaces to the list provided by caller. At the moment, in fact only one interface:
-     *     {@link ObservableFacade}.
-     * </p>
-     *
-     * @param dropFirst determines if first element should be dropped from the list (for building proxies based
-     *        on concrete class)
-     * @param interfaces the list of interfaces implemented by the facade
-     * @return adjusted list of interfaces which should be implemented by the facade
-     */
-    private static Class<?>[] adjustInterfaces(final boolean dropFirst, final Class<?>... interfaces) {
-        Class<?>[] result;
-        if ((0 == interfaces.length) || ((1 == interfaces.length) && dropFirst)) {
-            result = new Class<?>[] {ObservableFacade.class};
+    private static <T> Class<? super T> determineSuperclass(final @Nonnull Class<T> candidate) {
+        final Class<? super T> result;
+        if (is(candidate, inheritable().and(accessible()))) {
+            result = candidate;
         } else {
-            result = new Class<?>[dropFirst ? interfaces.length : interfaces.length + 1];
-            System.arraycopy(interfaces, dropFirst ? 1 : 0, result, 0, dropFirst ? interfaces.length - 1
-                : interfaces.length);
-            result[result.length - 1] = ObservableFacade.class;
+            result = determineSuperclass(candidate.getSuperclass());
         }
         return result;
     }
 
-    /**
-     * Creates new instance of object implementing given interfaces.
-     *
-     * <p>
-     *     Note: There is special case, when first element of {@code interfaces} is a class, in this case
-     *     created instance will extend this class, and implement the interfaces given afterward.
-     * </p>
-     *
-     * @param interfaces the interfaces to implement
-     * @return newly create instance of object implementing given interfaces
-     */
-    public static <T> T implementing(final Class<?>... interfaces) {
+    public static <S, T extends S> S over(@Nonnull T instance, final TraverseListener listener) {
 
-        // Sanity check first, ...
-        if (0 == interfaces.length) {
-            throw new IllegalArgumentException("Please, provide at least one class/interface to build proxy.");
-        }
+        // Create CGLIB Enhancer using the instance class as superclass of the proxy we intend to create, ...
+        final Class<? super T> superclass = determineSuperclass((Class<T>) instance.getClass());
+        final Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(superclass);
 
-        // ... check if first interfaces element is class or interface, build the proxy according to this check ...
-        T result;
-        final Class<?> targetClass = interfaces[0];
-        if (targetClass.isInterface()) {
-            result = (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                adjustInterfaces(false, interfaces), new ProxyMethodHandler());
-        } else {
-            result = (T) Enhancer.create(targetClass, adjustInterfaces(true, interfaces), new ProxyMethodHandler());
-        }
-        return result;
-    }
+        // ... specify set of interfaces to be implemented by the proxy, ...
+        enhancer.setInterfaces(superclass.isInterface() ? new Class[] {superclass} : superclass.getInterfaces());
 
-    private Facade() {
-        super();
+        // ... define the type of callback to be used, ...
+        enhancer.setCallbackType(DelegatingMethodInterceptor.class);
+
+        // ... and created the proxied class (skipping creating the instance for now).
+        final Class<T> proxiedClass = enhancer.createClass();
+
+        // Now prepare to create an instance of the proxied class, register callbacks and the class loader, ...
+        Enhancer.registerCallbacks(proxiedClass, new Callback[] {new DelegatingMethodInterceptor(instance, listener)});
+        enhancer.setClassLoader(superclass.getClassLoader());
+
+        // ... and do the dirty work.
+        return ObjenesisHelper.newInstance(proxiedClass);
     }
 
 }

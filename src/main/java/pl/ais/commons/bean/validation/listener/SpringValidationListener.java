@@ -1,15 +1,7 @@
-package pl.ais.commons.bean.validation.spring;
-
-import java.text.MessageFormat;
+package pl.ais.commons.bean.validation.listener;
 
 import org.springframework.validation.Errors;
-
-import pl.ais.commons.bean.validation.Constrainable;
-import pl.ais.commons.bean.validation.ConstrainableProperty;
-import pl.ais.commons.bean.validation.ConstrainableValue;
-import pl.ais.commons.bean.validation.ConstrainableVisitor;
-import pl.ais.commons.bean.validation.Constraint;
-import pl.ais.commons.bean.validation.event.ConstraintViolationEvent;
+import pl.ais.commons.bean.validation.event.ConstraintViolated;
 import pl.ais.commons.bean.validation.event.ValidationListener;
 
 /**
@@ -26,7 +18,7 @@ public class SpringValidationListener implements ValidationListener {
     /**
      * Constructs new instance.
      *
-     * @param errors binding/validation errors holder
+     * @param errors binding/validation2 errors holder
      */
     public SpringValidationListener(final Errors errors) {
         this.errors = errors;
@@ -36,15 +28,12 @@ public class SpringValidationListener implements ValidationListener {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("PMD.NullAssignment")
-    public void constraintViolated(final ConstraintViolationEvent event) {
-        final Constraint<?> constraint = event.getSource();
+    public void constraintViolated(final ConstraintViolated event) {
+        /**
+        final SimpleConstraint<?> constraint = event.getSource();
         final Constrainable<?> offender = event.getOffender();
         offender.accept(new ConstrainableVisitor<Void>() {
 
-            /**
-             * {@inheritDoc}
-             */
             @Override
             public Void visit(final ConstrainableProperty<?> constrainable) {
                 final String message = constraint.getMessage();
@@ -54,9 +43,6 @@ public class SpringValidationListener implements ValidationListener {
                 return null;
             }
 
-            /**
-             * {@inheritDoc}
-             */
             @Override
             public Void visit(final ConstrainableValue<?> constrainable) {
                 final String message = constraint.getMessage();
@@ -67,6 +53,7 @@ public class SpringValidationListener implements ValidationListener {
             }
 
         });
+         **/
     }
 
 }

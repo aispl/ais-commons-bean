@@ -1,4 +1,4 @@
-package pl.ais.commons.bean.validation;
+package pl.ais.commons.bean_old.validation;
 
 import org.junit.BeforeClass;
 import org.junit.Ignore;

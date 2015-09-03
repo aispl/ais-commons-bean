@@ -1,6 +1,6 @@
-package pl.ais.commons.bean.validation.constraint.mail;
+package pl.ais.commons.bean_old.validation.constraint.mail;
 
-import pl.ais.commons.bean.validation.Constraint;
+import pl.ais.commons.bean_old.validation.Constraint;
 import pl.ais.commons.domain.specification.Specifications;
 
 /**
