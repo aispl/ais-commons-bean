@@ -2,6 +2,9 @@ package pl.ais.commons.bean.validation;
 
 import pl.ais.commons.bean.facade.Facade;
 import pl.ais.commons.bean.facade.TraverseListener;
+import pl.ais.commons.bean.validation.constrainable.Constrainable;
+import pl.ais.commons.bean.validation.constrainable.ConstrainableCollection;
+import pl.ais.commons.bean.validation.constrainable.ConstrainableValue;
 import pl.ais.commons.bean.validation.event.ConstraintViolated;
 import pl.ais.commons.bean.validation.event.ValidationListener;
 import pl.ais.commons.domain.specification.Specifications;
@@ -45,6 +48,34 @@ public final class ValidationContext implements AutoCloseable, ValidationListene
     }
 
     /**
+     * Decorates given values to allow validation of all of them against some constraint.
+     *
+     * @param <T> the type of constrainable values
+     * @param first first constrainable value
+     * @param second second constrainable value
+     * @param rest remaining constrainable values
+     * @return decorated collection of values
+     */
+    public <T> Validatable<T> allOf(final T first, final T second, final T... rest) {
+        final Constrainable<T> constrainable = ConstrainableCollection.allOf(first, second, rest);
+        return validatable(constrainable);
+    }
+
+    /**
+     * Decorates given values to allow validation of any of them against some constraint.
+     *
+     * @param <T> the type of constrainable values
+     * @param first first constrainable value
+     * @param second second constrainable value
+     * @param rest remaining constrainable values
+     * @return decorated collection of values
+     */
+    public <T> Validatable<T> anyOf(final T first, final T second, final T... rest) {
+        final Constrainable<T> constrainable = ConstrainableCollection.anyOf(first, second, rest);
+        return validatable(constrainable);
+    }
+
+    /**
      * @see AutoCloseable#close()
      */
     @Override
@@ -52,6 +83,9 @@ public final class ValidationContext implements AutoCloseable, ValidationListene
         // Do nothing ...
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void constraintViolated(@Nonnull final ConstraintViolated event) {
         Arrays.stream(listeners).forEachOrdered(listeners -> listeners.constraintViolated(event));
@@ -59,7 +93,7 @@ public final class ValidationContext implements AutoCloseable, ValidationListene
 
     /**
      * Provides global validation2 listeners which will be used if there are no listeners defined
-     * at the specific {@link Constrainable} level.
+     * at the specific {@link ConstrainableValue} level.
      *
      * @param listeners listeners watching the constraint violations
      * @return this instance (for method invocation chaining)
@@ -68,19 +102,6 @@ public final class ValidationContext implements AutoCloseable, ValidationListene
     public ValidationContext observedBy(@Nonnull final ValidationListener... listeners) {
         this.listeners = listeners;
         return this;
-    }
-
-    /**
-     * Decorates given value to allow its validation against some constraint.
-     *
-     * @param value the value which will be constrained
-     * @return decorated value
-     */
-    public <T> Validatable<T> validateThat(final T value) {
-        final Constrainable constrainable = new Constrainable(traverseListener.asPath(), value);
-        return (first, rest) -> first.apply(constrainable, this) && Arrays.stream(rest)
-                                                                          .map(constraint -> constraint.apply(constrainable, this))
-                                                                          .allMatch(Specifications.isEqual(true));
     }
 
     /**
@@ -93,8 +114,31 @@ public final class ValidationContext implements AutoCloseable, ValidationListene
         return traverseListener.asPath();
     }
 
+    /**
+     * Returns the validation subject.
+     *
+     * @param <T> the type of validation subject
+     * @return the validation subject
+     */
     public <T> T subject() {
         return (T) target;
+    }
+
+    private <T> Validatable<T> validatable(final Constrainable<T> constrainable) {
+        return (first, rest) -> first.apply(constrainable, this) && Arrays.stream(rest)
+                                                                          .map(constraint -> constraint.apply(constrainable, this))
+                                                                          .allMatch(Specifications.isEqual(true));
+    }
+
+    /**
+     * Decorates given value to allow its validation against some constraint.
+     *
+     * @param value the value which will be constrained
+     * @return decorated value
+     */
+    public <T> Validatable<T> valueOf(final T value) {
+        final Constrainable<T> constrainable = new ConstrainableValue<>(traverseListener.asPath(), value);
+        return validatable(constrainable);
     }
 
 }

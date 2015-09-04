@@ -1,7 +1,7 @@
 package pl.ais.commons.bean.validation.constraint;
 
-import pl.ais.commons.bean.validation.Constrainable;
 import pl.ais.commons.bean.validation.Constraint;
+import pl.ais.commons.bean.validation.constrainable.Constrainable;
 import pl.ais.commons.bean.validation.event.ConstraintViolated;
 import pl.ais.commons.bean.validation.event.ValidationListener;
 
@@ -11,36 +11,27 @@ import javax.annotation.concurrent.Immutable;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Composite constraint being disjunction of other constraints.
  *
  * @param <T>
  * @author Warlock, AIS.PL
- * @since 1.0.1
+ * @since 1.2.1
  */
 @Immutable
-public final class AnyOfConstraint<T> implements Constraint<AnyOfConstraint<T>,T> {
-
-    private final boolean active;
+public final class AnyOfConstraint<T> extends AbstractConstraint<AnyOfConstraint<T>, T> {
 
     private final Constraint<?, T>[] constraints;
-
-    private final String message;
-
-    private final Object[] messageParameters;
-
-    private final String name;
 
     private final boolean thorough;
 
     private AnyOfConstraint(@Nonnull final String name, final Constraint<?, T>[] constraints, final boolean active,
                             final boolean thorough, @Nonnull final Object[] messageParameters, @Nullable final String message) {
-        this.active = active;
+        super(name, active, messageParameters, message);
+
         this.constraints = Arrays.copyOf(constraints, constraints.length);
-        this.message = message;
-        this.messageParameters = Arrays.copyOf(messageParameters, messageParameters.length);
-        this.name = name;
         this.thorough = thorough;
     }
 
@@ -55,16 +46,12 @@ public final class AnyOfConstraint<T> implements Constraint<AnyOfConstraint<T>,T
     @SuppressWarnings("unchecked")
     @SafeVarargs
     public AnyOfConstraint(final boolean thorough, @Nonnull final Constraint<?, T> first, final Constraint<?, T>... rest) {
-        super();
+        super("disjunction", true, new Object[0], null);
 
         // Verify constructor requirements, ...
         Objects.requireNonNull(first, "First constraint is required");
 
         // ... and initialize this instance fields.
-        active = true;
-        message = null;
-        name = "disjunction";
-        messageParameters = new Object[0];
         this.thorough = thorough;
 
         constraints = (Constraint<?, T>[]) Array.newInstance(Constraint.class, rest.length + 1);
@@ -77,7 +64,7 @@ public final class AnyOfConstraint<T> implements Constraint<AnyOfConstraint<T>,T
      */
     @Nonnull
     @Override
-    public Boolean apply(final Constrainable<T> constrainable, final ValidationListener listener) {
+    public Boolean apply(final Constrainable<? extends T> constrainable, final ValidationListener listener) {
         boolean result = false;
         processing:
         {
@@ -90,7 +77,7 @@ public final class AnyOfConstraint<T> implements Constraint<AnyOfConstraint<T>,T
                 }
 
                 // ... verify if constraint is satisfied, break processing if needed.
-                final boolean satisfied = constraint.test(constrainable.getValue());
+                final boolean satisfied = constrainable.apply(constraint);
                 if (satisfied && !thorough) {
                     break processing;
                 }
@@ -117,6 +104,16 @@ public final class AnyOfConstraint<T> implements Constraint<AnyOfConstraint<T>,T
         return Arrays.stream(constraints)
                      .filter(Constraint::isActive)
                      .anyMatch(constraint -> constraint.test(candidate));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return Arrays.stream(constraints)
+                     .map(Constraint::toString)
+                     .collect(Collectors.joining(" || ", "Composite Constraint: (", ")"));
     }
 
     /**

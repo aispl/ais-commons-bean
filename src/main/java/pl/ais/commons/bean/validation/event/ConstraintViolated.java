@@ -1,6 +1,6 @@
 package pl.ais.commons.bean.validation.event;
 
-import pl.ais.commons.bean.validation.Constrainable;
+import pl.ais.commons.bean.validation.constrainable.Constrainable;
 import pl.ais.commons.bean.validation.Constraint;
 
 import java.util.EventObject;

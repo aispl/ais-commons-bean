@@ -1,8 +1,15 @@
 package pl.ais.commons.bean.validation.listener;
 
 import org.springframework.validation.Errors;
+import pl.ais.commons.bean.validation.Constraint;
+import pl.ais.commons.bean.validation.constrainable.Constrainable;
+import pl.ais.commons.bean.validation.constrainable.ConstrainableCollection;
+import pl.ais.commons.bean.validation.constrainable.ConstrainableValue;
+import pl.ais.commons.bean.validation.constrainable.ConstrainableVisitor;
 import pl.ais.commons.bean.validation.event.ConstraintViolated;
 import pl.ais.commons.bean.validation.event.ValidationListener;
+
+import java.text.MessageFormat;
 
 /**
  * {@link ValidationListener} implementation notifying Spring Framework about the constraint violations
@@ -29,31 +36,36 @@ public class SpringValidationListener implements ValidationListener {
      */
     @Override
     public void constraintViolated(final ConstraintViolated event) {
-        /**
-        final SimpleConstraint<?> constraint = event.getSource();
+        final Constraint<?, ?> constraint = event.getSource();
         final Constrainable<?> offender = event.getOffender();
-        offender.accept(new ConstrainableVisitor<Void>() {
-
-            @Override
-            public Void visit(final ConstrainableProperty<?> constrainable) {
-                final String message = constraint.getMessage();
-                final Object[] messageParameters = constraint.getMessageParameters();
-                errors.rejectValue(constrainable.getPathRepresentation(), constraint.getName(), messageParameters,
-                    (null == message) ? null : MessageFormat.format(message, messageParameters));
-                return null;
-            }
-
-            @Override
-            public Void visit(final ConstrainableValue<?> constrainable) {
-                final String message = constraint.getMessage();
-                final Object[] messageParameters = constraint.getMessageParameters();
-                errors.reject(constraint.getName(), messageParameters,
-                    (null == message) ? null : MessageFormat.format(message, messageParameters));
-                return null;
-            }
-
-        });
-         **/
+        offender.accept(new ErrorReportingVisitor(constraint));
     }
 
+    private class ErrorReportingVisitor implements ConstrainableVisitor<Void> {
+
+        private final Constraint<?, ?> constraint;
+
+        protected ErrorReportingVisitor(final Constraint<?, ?> constraint) {
+            this.constraint = constraint;
+        }
+
+        @Override
+        public Void visit(final ConstrainableValue constrainable) {
+            final String message = constraint.getMessage();
+            final Object[] messageParameters = constraint.getMessageParameters();
+            errors.rejectValue(constrainable.getId(), constraint.getName(), messageParameters,
+                (null == message) ? null : MessageFormat.format(message, messageParameters));
+            return null;
+        }
+
+        @Override
+        public Void visit(final ConstrainableCollection constrainable) {
+            final String message = constraint.getMessage();
+            final Object[] messageParameters = constraint.getMessageParameters();
+            errors.reject(constraint.getName(), messageParameters,
+                (null == message) ? null : MessageFormat.format(message, messageParameters));
+            return null;
+        }
+
+    }
 }

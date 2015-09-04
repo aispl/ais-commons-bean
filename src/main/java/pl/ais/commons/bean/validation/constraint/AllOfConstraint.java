@@ -1,7 +1,7 @@
 package pl.ais.commons.bean.validation.constraint;
 
-import pl.ais.commons.bean.validation.Constrainable;
 import pl.ais.commons.bean.validation.Constraint;
+import pl.ais.commons.bean.validation.constrainable.Constrainable;
 import pl.ais.commons.bean.validation.event.ConstraintViolated;
 import pl.ais.commons.bean.validation.event.ValidationListener;
 
@@ -11,36 +11,26 @@ import javax.annotation.concurrent.Immutable;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Composite constraint being conjunction of other constraints.
  *
  * @param <T>
  * @author Warlock, AIS.PL
- * @since 1.0.1
+ * @since 1.2.1
  */
 @Immutable
-public class AllOfConstraint<T> implements Constraint<AllOfConstraint<T>, T> {
-
-    private final boolean active;
+public class AllOfConstraint<T> extends AbstractConstraint<AllOfConstraint<T>, T> {
 
     private final Constraint<?, T>[] constraints;
-
-    private final String message;
-
-    private final Object[] messageParameters;
-
-    private final String name;
 
     private final boolean thorough;
 
     private AllOfConstraint(@Nonnull final String name, final Constraint<?, T>[] constraints, final boolean active,
                             final boolean thorough, @Nonnull final Object[] messageParameters, @Nullable final String message) {
-        this.active = active;
+        super(name, active, messageParameters, message);
         this.constraints = Arrays.copyOf(constraints, constraints.length);
-        this.message = message;
-        this.messageParameters = Arrays.copyOf(messageParameters, messageParameters.length);
-        this.name = name;
         this.thorough = thorough;
     }
 
@@ -48,23 +38,19 @@ public class AllOfConstraint<T> implements Constraint<AllOfConstraint<T>, T> {
      * Constructs new instance.
      *
      * @param thorough determines if all constraints should be checked (when {@code true}), or we should abort checking
-     *                 at first satisfied constraint (when {@code false})
+     *                 at first not satisfied constraint (when {@code false})
      * @param first    first constraint to be enclosed by this instance
      * @param rest     remaining constraints to be enclosed by this instance
      */
     @SuppressWarnings("unchecked")
     @SafeVarargs
     public AllOfConstraint(final boolean thorough, @Nonnull final Constraint<?, T> first, final Constraint<?, T>... rest) {
-        super();
+        super("conjunction", true, new Object[0], null);
 
         // Verify constructor requirements, ...
         Objects.requireNonNull(first, "First constraint is required");
 
         // ... and initialize this instance fields.
-        active = true;
-        message = null;
-        name = "conjunction";
-        messageParameters = new Object[0];
         this.thorough = thorough;
 
         constraints = (Constraint<?, T>[]) Array.newInstance(Constraint.class, rest.length + 1);
@@ -77,7 +63,7 @@ public class AllOfConstraint<T> implements Constraint<AllOfConstraint<T>, T> {
      */
     @Nonnull
     @Override
-    public Boolean apply(final Constrainable<T> constrainable, final ValidationListener listener) {
+    public Boolean apply(final Constrainable<? extends T> constrainable, final ValidationListener listener) {
         boolean result = false;
         processing:
         {
@@ -90,7 +76,7 @@ public class AllOfConstraint<T> implements Constraint<AllOfConstraint<T>, T> {
                 }
 
                 // ... verify if constraint is satisfied, break processing if needed.
-                final boolean satisfied = constraint.test(constrainable.getValue());
+                final boolean satisfied = constrainable.apply(constraint);
                 if (!satisfied) {
                     listener.constraintViolated(new ConstraintViolated(this, constrainable));
                     if (!thorough) {
@@ -119,6 +105,16 @@ public class AllOfConstraint<T> implements Constraint<AllOfConstraint<T>, T> {
         return Arrays.stream(constraints)
                      .filter(Constraint::isActive)
                      .allMatch(constraint -> constraint.test(candidate));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return Arrays.stream(constraints)
+                     .map(Constraint::toString)
+                     .collect(Collectors.joining(" && ", "Composite Constraint: (", ")"));
     }
 
     /**

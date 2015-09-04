@@ -1,5 +1,6 @@
 package pl.ais.commons.bean.validation;
 
+import pl.ais.commons.bean.validation.constrainable.Constrainable;
 import pl.ais.commons.bean.validation.event.ConstraintViolated;
 import pl.ais.commons.bean.validation.event.ValidationListener;
 
@@ -16,7 +17,7 @@ import java.util.function.Predicate;
  * @author Warlock, AIS.PL
  * @since 1.2.1
  */
-public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Constrainable<T>, ValidationListener, Boolean>, Predicate<T> {
+public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Constrainable<? extends T>, ValidationListener, Boolean>, Predicate<T> {
 
     /**
      * Verifies if given constrainable matches the constraint and reports violation if needed.
@@ -26,13 +27,28 @@ public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Co
      * @return {@code true} if given constrainable matches the constraint, {@code false} otherwise
      */
     @Nonnull
-    default Boolean apply(final Constrainable<T> constrainable, final ValidationListener listener) {
-        boolean matched = test(constrainable.getValue());
+    default Boolean apply(final Constrainable<? extends T> constrainable, final ValidationListener listener) {
+        boolean matched = constrainable.apply(this);
         if (!matched) {
             listener.constraintViolated(new ConstraintViolated(this, constrainable));
         }
         return matched;
     }
+
+    /**
+     * @return the message which should be used to describe this constraint
+     */
+    String getMessage();
+
+    /**
+     * @return the message parameters
+     */
+    Object[] getMessageParameters();
+
+    /**
+     * @return name of this constraint
+     */
+    String getName();
 
     /**
      * Indicates if this constraint is active.
