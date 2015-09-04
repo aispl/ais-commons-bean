@@ -107,14 +107,12 @@
             <artifactId>cglib</artifactId>
             <version>${cglib.version}</version>
         </dependency>
-<!--
         <dependency>
-            <groupId>org.joda</groupId>
-            <artifactId>joda-money</artifactId>
-            <version>0.10.0</version>
+            <groupId>org.javamoney</groupId>
+            <artifactId>moneta</artifactId>
+            <version>1.0</version>
             <optional>true</optional>
         </dependency>
-  -->
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
