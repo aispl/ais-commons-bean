@@ -78,12 +78,15 @@ public final class AnyOfConstraint<T> extends AbstractConstraint<AnyOfConstraint
 
                 // ... verify if constraint is satisfied, break processing if needed.
                 final boolean satisfied = constrainable.apply(constraint);
+                result |= satisfied;
                 if (satisfied && !thorough) {
                     break processing;
                 }
             }
 
-            listener.constraintViolated(new ConstraintViolated(this, constrainable));
+            if (!result) {
+                listener.constraintViolated(new ConstraintViolated(this, constrainable));
+            }
         }
         return result;
     }

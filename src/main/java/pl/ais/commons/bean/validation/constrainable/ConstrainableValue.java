@@ -17,19 +17,12 @@ import java.util.Objects;
  * @since 1.2.1
  */
 @Immutable
+@SuppressWarnings("PMD.ShortVariable")
 public final class ConstrainableValue<T> implements Constrainable<T> {
 
     private final String id;
 
     private final T value;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <R> R accept(@Nonnull final ConstrainableVisitor visitor) {
-        return (R) visitor.visit(this);
-    }
 
     /**
      * Constructs new instance.
@@ -40,6 +33,14 @@ public final class ConstrainableValue<T> implements Constrainable<T> {
     public ConstrainableValue(final String id, final T value) {
         this.id = id;
         this.value = value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <R> R accept(@Nonnull final ConstrainableVisitor visitor) {
+        return (R) visitor.visit(this);
     }
 
     /**

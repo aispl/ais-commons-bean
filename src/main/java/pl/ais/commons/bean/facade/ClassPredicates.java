@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 final class ClassPredicates {
 
     private ClassPredicates() {
-        super();
+        throw new AssertionError("Creation of " + getClass().getName() + " instances is forbidden.");
     }
 
     public static Predicate<Class<?>> accessible() {
@@ -23,7 +23,7 @@ final class ClassPredicates {
         return candidate -> !Modifier.isFinal(candidate.getModifiers());
     }
 
-    public static boolean is(Class<?> candidate, Predicate<Class<?>> predicate) {
+    public static boolean is(final Class<?> candidate, final Predicate<Class<?>> predicate) {
         return predicate.test(candidate);
     }
 

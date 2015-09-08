@@ -13,7 +13,7 @@ import static java.util.stream.Collectors.joining;
 @NotThreadSafe
 public final class TraverseListener {
 
-    private Stack<String> stack = new Stack<>();
+    private final Stack<String> stack = new Stack<>();
 
     public String asPath() {
         final String path = stack.stream().collect(joining("."));
@@ -21,6 +21,20 @@ public final class TraverseListener {
         return path;
     }
 
+    private void handleCollectionOrMapElementAccessor(final Object arg) {
+        final String result;
+        final Object index = arg;
+        if ((null != index) && String.class.equals(index.getClass())) {
+            result = new StringBuilder().append("['").append(index).append("']").toString();
+        } else {
+            result = new StringBuilder().append('[').append(index).append(']').toString();
+        }
+        if (!stack.isEmpty()) {
+            stack.push(stack.pop() + result);
+        }
+    }
+
+    @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.UseVarargs"})
     public void onMethodCall(final Object object, final Method method, final Object[] args) {
         final char[] name = method.getName().toCharArray();
         final Class<?> returnType = method.getReturnType();
@@ -42,20 +56,9 @@ public final class TraverseListener {
 
             // ... Collection/Map element accessor.
             if ((3 == name.length) && (name[0] == 'g') && (name[1] == 'e') && (name[2] == 't') && (1 == method.getParameterCount())) {
-                final String result;
-                final Object index = args[0];
-                if ((null != index) && String.class.equals(index.getClass())) {
-                    result = new StringBuilder().append("['").append(index).append("']").toString();
-                } else {
-                    result = new StringBuilder().append('[').append(index).append(']').toString();
-                }
-                if (!stack.isEmpty()) {
-                    stack.push(stack.pop() + result);
-                }
+                handleCollectionOrMapElementAccessor(args[0]);
                 break processing;
             }
-
-            throw new IllegalStateException("Unhandled case.");
         }
     }
 

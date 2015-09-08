@@ -14,6 +14,7 @@ import javax.money.MonetaryAmount;
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
+@SuppressWarnings({"PMD.AvoidFieldNameMatchingMethodName", "PMD.TooManyMethods"})
 public final class Constraints {
 
     private static final Constraint REQUIRED = new SimpleConstraint<>("required", Specifications.notNull());
@@ -108,7 +109,7 @@ public final class Constraints {
      * @param value the value
      * @return constraint verifying if constrainable value is equal to predefined value
      */
-    public static final <T> Constraint<?, T> isEqual(final T value) {
+    public static <T> Constraint<?, T> isEqual(final T value) {
         return new SimpleConstraint<>("isEqual", Specifications.isEqual(value));
     }
 
@@ -148,7 +149,7 @@ public final class Constraints {
      * @param regex the regular expression
      * @return constraint verifying if constrainable value matches given regular expression
      */
-    public static final <T extends CharSequence> Constraint<?, T> matches(final String regex) {
+    public static <T extends CharSequence> Constraint<?, T> matches(final String regex) {
         return new SimpleConstraint<>("regex", Specifications.matches(regex));
     }
 
@@ -197,7 +198,7 @@ public final class Constraints {
      * @return constraint verifying if string contains valid email address.
      */
     @SuppressWarnings("unchecked")
-    public static final <T extends CharSequence> SimpleConstraint<T> validEmail() {
+    public static <T extends CharSequence> SimpleConstraint<T> validEmail() {
         return new SimpleConstraint<>("validEmail", Specifications.validEmail());
     }
 

@@ -14,11 +14,12 @@ import java.util.stream.Collectors;
  * @author Warlock, AIS.PL
  * @since 1.2.1
  */
+@SuppressWarnings("PMD.AbstractNaming")
 public abstract class ConstrainableCollection<T> implements Constrainable<T> {
 
     protected final Collection<T> elements;
 
-    private ConstrainableCollection(final T first, final T second, final T... rest) {
+    protected ConstrainableCollection(final T first, final T second, final T... rest) {
         elements = new ArrayList<>(2 + rest.length);
         elements.add(first);
         elements.add(second);
@@ -31,10 +32,10 @@ public abstract class ConstrainableCollection<T> implements Constrainable<T> {
      * <p>Constrainable created by this method is satisfying some constraint if and only if all constrainable values
      * enclosed by it are satisfying the constraint.
      *
-     * @param <T> the type of constrainable values
-     * @param first first constrainable value
+     * @param <T>    the type of constrainable values
+     * @param first  first constrainable value
      * @param second second constrainable value
-     * @param rest remaining constrainable values
+     * @param rest   remaining constrainable values
      * @return constrainable over collection of all given values
      */
     public static <T> Constrainable<T> allOf(final T first, final T second, final T... rest) {
@@ -67,10 +68,10 @@ public abstract class ConstrainableCollection<T> implements Constrainable<T> {
      * <p>Constrainable created by this method is satisfying some constraint if and only if any constrainable value
      * enclosed by it is satisfying the constraint.
      *
-     * @param <T> the type of constrainable values
-     * @param first first constrainable value
+     * @param <T>    the type of constrainable values
+     * @param first  first constrainable value
      * @param second second constrainable value
-     * @param rest remaining constrainable values
+     * @param rest   remaining constrainable values
      * @return constrainable over any element of given collection of values
      */
     public static <T> Constrainable<T> anyOf(final T first, final T second, final T... rest) {

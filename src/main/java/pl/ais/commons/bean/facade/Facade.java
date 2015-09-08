@@ -18,6 +18,10 @@ import static pl.ais.commons.bean.facade.ClassPredicates.is;
 @Immutable
 public final class Facade {
 
+    private Facade() {
+        throw new AssertionError("Creation of " + getClass().getName() + " instances is forbidden.");
+    }
+
     private static <T> Class<? super T> determineSuperclass(final @Nonnull Class<T> candidate) {
         final Class<? super T> result;
         if (is(candidate, inheritable().and(accessible()))) {
@@ -28,7 +32,7 @@ public final class Facade {
         return result;
     }
 
-    public static <S, T extends S> S over(@Nonnull T instance, final TraverseListener listener) {
+    public static <S, T extends S> S over(@Nonnull final T instance, final TraverseListener listener) {
 
         // Create CGLIB Enhancer using the instance class as superclass of the proxy we intend to create, ...
         final Class<? super T> superclass = determineSuperclass((Class<T>) instance.getClass());

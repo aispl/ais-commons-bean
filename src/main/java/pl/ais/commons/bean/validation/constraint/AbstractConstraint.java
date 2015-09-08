@@ -42,7 +42,7 @@ abstract class AbstractConstraint<C extends Constraint<C, T>, T> implements Cons
      * {@inheritDoc}
      */
     public Object[] getMessageParameters() {
-        return messageParameters;
+        return Arrays.copyOf(messageParameters, messageParameters.length);
     }
 
     /**

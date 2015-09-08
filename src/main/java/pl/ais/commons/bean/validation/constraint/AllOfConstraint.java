@@ -63,6 +63,7 @@ public class AllOfConstraint<T> extends AbstractConstraint<AllOfConstraint<T>, T
      */
     @Nonnull
     @Override
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public Boolean apply(final Constrainable<? extends T> constrainable, final ValidationListener listener) {
         boolean result = false;
         processing:

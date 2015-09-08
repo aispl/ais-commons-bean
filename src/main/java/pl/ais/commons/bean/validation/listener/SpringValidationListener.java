@@ -41,6 +41,7 @@ public class SpringValidationListener implements ValidationListener {
         offender.accept(new ErrorReportingVisitor(constraint));
     }
 
+    @SuppressWarnings("PMD.NullAssignment")
     private class ErrorReportingVisitor implements ConstrainableVisitor<Void> {
 
         private final Constraint<?, ?> constraint;
