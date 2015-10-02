@@ -15,12 +15,14 @@ final class ClassPredicates {
         throw new AssertionError("Creation of " + getClass().getName() + " instances is forbidden.");
     }
 
-    public static Predicate<Class<?>> accessible() {
-        return candidate -> !Modifier.isPrivate(candidate.getModifiers());
-    }
-
+    /**
+     * @return Predicate matched by classes being protected or public, having no <em>final</em> modifier applied
+     */
     public static Predicate<Class<?>> inheritable() {
-        return candidate -> !Modifier.isFinal(candidate.getModifiers());
+        return candidate -> {
+            final int modifiers = candidate.getModifiers();
+            return !Modifier.isFinal(modifiers) && (Modifier.isProtected(modifiers) || Modifier.isPublic(modifiers));
+        };
     }
 
     public static boolean is(final Class<?> candidate, final Predicate<Class<?>> predicate) {
