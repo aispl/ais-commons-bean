@@ -23,11 +23,10 @@ public final class TraverseListener {
 
     private void handleCollectionOrMapElementAccessor(final Object arg) {
         final String result;
-        final Object index = arg;
-        if ((null != index) && String.class.equals(index.getClass())) {
-            result = new StringBuilder().append("['").append(index).append("']").toString();
+        if ((null != arg) && String.class.equals(arg.getClass())) {
+            result = new StringBuilder().append("['").append(arg).append("']").toString();
         } else {
-            result = new StringBuilder().append('[').append(index).append(']').toString();
+            result = new StringBuilder().append('[').append(arg).append(']').toString();
         }
         if (!stack.isEmpty()) {
             stack.push(stack.pop() + result);
