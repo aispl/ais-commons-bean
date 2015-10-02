@@ -91,11 +91,25 @@ public final class AllOfConstraint<T> extends AbstractConstraint<AllOfConstraint
     }
 
     /**
-     * {@inheritDoc}
+     * Indicates whether some other object is "equal to" this one.
      */
     @Override
-    public boolean isActive() {
-        return active;
+    public boolean equals(final Object object) {
+        boolean result = (this == object);
+        if (!result && (object instanceof AllOfConstraint)) {
+            final AllOfConstraint other = (AllOfConstraint) object;
+            result = Objects.equals(name, other.name) && Objects.equals(thorough, other.thorough)
+                && Arrays.equals(constraints, other.constraints);
+        }
+        return result;
+    }
+
+    /**
+     * @return a hash code value for this constraint
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, thorough, Arrays.hashCode(constraints));
     }
 
     /**

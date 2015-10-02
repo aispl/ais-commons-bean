@@ -42,6 +42,27 @@ public final class SimpleConstraint<T> extends AbstractConstraint<SimpleConstrai
     }
 
     /**
+     * Indicates whether some other object is "equal to" this one.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        boolean result = (this == object);
+        if (!result && (object instanceof SimpleConstraint)) {
+            final SimpleConstraint other = (SimpleConstraint) object;
+            result = Objects.equals(name, other.name) && Objects.equals(determinant, other.determinant);
+        }
+        return result;
+    }
+
+    /**
+     * @return a hash code value for this constraint
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, determinant);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
