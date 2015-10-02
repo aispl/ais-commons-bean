@@ -164,7 +164,7 @@ public final class Constraints {
      * @return constraint verifying if required value has been defined (is not {@code null})
      */
     @SuppressWarnings("unchecked")
-    public static <T> Constraint<?, T> required() {
+    public static Constraint<?, Object> required() {
         return REQUIRED;
     }
 
