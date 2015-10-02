@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * @since 1.2.1
  */
 @Immutable
-public class AllOfConstraint<T> extends AbstractConstraint<AllOfConstraint<T>, T> {
+public final class AllOfConstraint<T> extends AbstractConstraint<AllOfConstraint<T>, T> {
 
     private final Constraint<?, T>[] constraints;
 
