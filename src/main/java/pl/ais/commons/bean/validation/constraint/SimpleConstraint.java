@@ -67,7 +67,7 @@ public final class SimpleConstraint<T> extends AbstractConstraint<SimpleConstrai
      */
     @Override
     public boolean test(final T candidate) {
-        return active ? determinant.test(candidate) : true;
+        return !active || determinant.test(candidate);
     }
 
     /**
@@ -84,6 +84,7 @@ public final class SimpleConstraint<T> extends AbstractConstraint<SimpleConstrai
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("hiding")
     @Nonnull
     public SimpleConstraint<T> when(final boolean active) {
@@ -93,6 +94,7 @@ public final class SimpleConstraint<T> extends AbstractConstraint<SimpleConstrai
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("hiding")
     @Nonnull
     public SimpleConstraint<T> withDescription(final String message, final Object... messageParameters) {
@@ -102,6 +104,7 @@ public final class SimpleConstraint<T> extends AbstractConstraint<SimpleConstrai
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("hiding")
     @Nonnull
     public SimpleConstraint<T> withMessageParameters(final Object... messageParameters) {

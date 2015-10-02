@@ -50,10 +50,10 @@ public final class ValidationContext implements AutoCloseable, ValidationListene
     /**
      * Decorates given values to allow validation of all of them against some constraint.
      *
-     * @param <T> the type of constrainable values
-     * @param first first constrainable value
+     * @param <T>    the type of constrainable values
+     * @param first  first constrainable value
      * @param second second constrainable value
-     * @param rest remaining constrainable values
+     * @param rest   remaining constrainable values
      * @return decorated collection of values
      */
     public <T> Validatable<T> allOf(final T first, final T second, final T... rest) {
@@ -64,10 +64,10 @@ public final class ValidationContext implements AutoCloseable, ValidationListene
     /**
      * Decorates given values to allow validation of any of them against some constraint.
      *
-     * @param <T> the type of constrainable values
-     * @param first first constrainable value
+     * @param <T>    the type of constrainable values
+     * @param first  first constrainable value
      * @param second second constrainable value
-     * @param rest remaining constrainable values
+     * @param rest   remaining constrainable values
      * @return decorated collection of values
      */
     public <T> Validatable<T> anyOf(final T first, final T second, final T... rest) {
@@ -100,7 +100,7 @@ public final class ValidationContext implements AutoCloseable, ValidationListene
      */
     @SuppressWarnings("hiding")
     public ValidationContext observedBy(@Nonnull final ValidationListener... listeners) {
-        this.listeners = listeners;
+        this.listeners = Arrays.copyOf(listeners, listeners.length);
         return this;
     }
 

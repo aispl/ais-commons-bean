@@ -1,7 +1,7 @@
 package pl.ais.commons.bean.validation.event;
 
-import pl.ais.commons.bean.validation.constrainable.Constrainable;
 import pl.ais.commons.bean.validation.Constraint;
+import pl.ais.commons.bean.validation.constrainable.Constrainable;
 
 import java.util.EventObject;
 import java.util.Objects;
@@ -13,6 +13,8 @@ import java.util.Objects;
  * @since 1.0.1
  */
 public final class ConstraintViolated extends EventObject {
+
+    private static final long serialVersionUID = 8067767397804548665L;
 
     private final Constrainable<?> offender;
 
