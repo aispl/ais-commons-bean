@@ -55,7 +55,7 @@ public abstract class ConstrainableCollection<T> implements Constrainable<T> {
             @Override
             public String toString() {
                 return elements.stream()
-                               .map(element -> null == element ? "null" : "'" + element + "'")
+                               .map(element -> (null == element) ? "null" : "'" + element + "'")
                                .collect(Collectors.joining(", ", "All values of Collection composed of: [", "]"));
             }
 
@@ -91,7 +91,7 @@ public abstract class ConstrainableCollection<T> implements Constrainable<T> {
             @Override
             public String toString() {
                 return elements.stream()
-                               .map(element -> null == element ? "null" : "'" + element + "'")
+                               .map(element -> (null == element) ? "null" : "'" + element + "'")
                                .collect(Collectors.joining(", ", "Any value from Collection composed of : [", "]"));
             }
 

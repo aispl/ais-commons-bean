@@ -26,9 +26,10 @@ public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Co
      * @param listener      the validation listener observing constraint violations
      * @return {@code true} if given constrainable matches the constraint, {@code false} otherwise
      */
+    @Override
     @Nonnull
     default Boolean apply(final Constrainable<? extends T> constrainable, final ValidationListener listener) {
-        boolean matched = constrainable.apply(this);
+        final boolean matched = constrainable.apply(this);
         if (!matched) {
             listener.constraintViolated(new ConstraintViolated(this, constrainable));
         }
@@ -66,6 +67,7 @@ public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Co
      * @param candidate value to be matched against this constraint
      * @return {@code true} if given argument matches this constraint, {@code false} otherwise
      */
+    @Override
     boolean test(@Nullable T candidate);
 
     /**

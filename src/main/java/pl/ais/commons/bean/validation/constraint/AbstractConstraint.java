@@ -34,6 +34,7 @@ abstract class AbstractConstraint<C extends Constraint<C, T>, T> implements Cons
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getMessage() {
         return message;
     }
@@ -41,6 +42,7 @@ abstract class AbstractConstraint<C extends Constraint<C, T>, T> implements Cons
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object[] getMessageParameters() {
         return Arrays.copyOf(messageParameters, messageParameters.length);
     }
@@ -48,6 +50,7 @@ abstract class AbstractConstraint<C extends Constraint<C, T>, T> implements Cons
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -55,6 +58,7 @@ abstract class AbstractConstraint<C extends Constraint<C, T>, T> implements Cons
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isActive() {
         return active;
     }

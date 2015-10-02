@@ -18,9 +18,9 @@ import java.text.MessageFormat;
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
-public class SpringValidationListener implements ValidationListener {
+public final class SpringValidationListener implements ValidationListener {
 
-    protected transient final Errors errors;
+    private final Errors errors;
 
     /**
      * Constructs new instance.
@@ -46,7 +46,7 @@ public class SpringValidationListener implements ValidationListener {
 
         private final Constraint<?, ?> constraint;
 
-        protected ErrorReportingVisitor(final Constraint<?, ?> constraint) {
+        ErrorReportingVisitor(final Constraint<?, ?> constraint) {
             this.constraint = constraint;
         }
 
