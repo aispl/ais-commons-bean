@@ -156,7 +156,7 @@ public final class Constraints {
     /**
      * @return constraint verifying if character sequence is holding at least one non-whitespace character.
      */
-    public static <T extends CharSequence> Constraint<?, T> notBlank() {
+    public static Constraint<?, CharSequence> notBlank() {
         return new SimpleConstraint<>("notBlank", Specifications.notBlank());
     }
 
