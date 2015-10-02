@@ -40,21 +40,21 @@ public final class TraverseListener {
         processing:
         {
             // Accessors (get*) and mutators (set*), ...
-            if ((name.length > 3) && ((name[0] == 'g') || (name[0] == 's')) && (name[1] == 'e') && (name[2] == 't')) {
+            if ((3 < name.length) && (('g' == name[0]) || ('s' == name[0])) && ('e' == name[1]) && ('t' == name[2])) {
                 name[3] = Character.toLowerCase(name[3]);
                 stack.push(String.valueOf(name, 3, name.length - 3));
                 break processing;
             }
 
             // ... boolean accessors (is*), ...
-            if ((name.length > 2) && (name[0] == 'i') && (name[1] == 's') && returnType.equals(boolean.class)) {
+            if ((2 < name.length) && ('i' == name[0]) && ('s' == name[1]) && returnType.equals(boolean.class)) {
                 name[2] = Character.toLowerCase(name[2]);
                 stack.push(String.valueOf(name, 2, name.length - 2));
                 break processing;
             }
 
             // ... Collection/Map element accessor.
-            if ((3 == name.length) && (name[0] == 'g') && (name[1] == 'e') && (name[2] == 't') && (1 == method.getParameterCount())) {
+            if ((3 == name.length) && ('g' == name[0]) && ('e' == name[1]) && ('t' == name[2]) && (1 == method.getParameterCount())) {
                 handleCollectionOrMapElementAccessor(args[0]);
                 break processing;
             }
