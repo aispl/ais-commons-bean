@@ -18,6 +18,7 @@ import java.util.Arrays;
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class ValidationContext implements AutoCloseable, ValidationListener {
 
     private final Object target;
