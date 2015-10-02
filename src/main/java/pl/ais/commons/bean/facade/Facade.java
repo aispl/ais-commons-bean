@@ -7,11 +7,12 @@ import org.objenesis.ObjenesisHelper;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
-import static pl.ais.commons.bean.facade.ClassPredicates.accessible;
 import static pl.ais.commons.bean.facade.ClassPredicates.inheritable;
 import static pl.ais.commons.bean.facade.ClassPredicates.is;
 
 /**
+ * Provides set of methods usable for creating facades.
+ *
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
@@ -22,16 +23,19 @@ public final class Facade {
         throw new AssertionError("Creation of " + getClass().getName() + " instances is forbidden.");
     }
 
-    private static <T> Class<? super T> determineSuperclass(final @Nonnull Class<T> candidate) {
-        final Class<? super T> result;
-        if (is(candidate, inheritable().and(accessible()))) {
-            result = candidate;
-        } else {
-            result = determineSuperclass(candidate.getSuperclass());
-        }
-        return result;
+    private static <T> Class<? super T> determineSuperclass(@Nonnull final Class<T> candidate) {
+        return is(candidate, inheritable()) ? candidate : determineSuperclass(candidate.getSuperclass());
     }
 
+    /**
+     * Creates and returns the facade (proxy) built over given instance of class {@literal T}.
+     *
+     * @param instance instance to be proxied
+     * @param listener property traverse listener to be used for the facade
+     * @param <S>      superclass of {@literal T} which will be extended by the facade
+     * @param <T>      type of the instance to be proxied
+     * @return newly created facade (proxy) build over given instance of class {@literal T}
+     */
     public static <S, T extends S> S over(@Nonnull final T instance, final TraverseListener listener) {
 
         // Create CGLIB Enhancer using the instance class as superclass of the proxy we intend to create, ...
