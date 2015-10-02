@@ -125,9 +125,22 @@ public final class ValidationContext implements AutoCloseable, ValidationListene
     }
 
     private <T> Validatable<T> validatable(final Constrainable<T> constrainable) {
-        return (first, rest) -> first.apply(constrainable, this) && Arrays.stream(rest)
-                                                                          .map(constraint -> constraint.apply(constrainable, this))
-                                                                          .allMatch(Specifications.isEqual(true));
+        final ValidationListener listener = this;
+        return new Validatable<T>() {
+
+            @Override
+            public Constrainable<T> get() {
+                return constrainable;
+            }
+
+            @Override
+            public boolean satisfies(@Nonnull final Constraint<?, ? super T> first, final Constraint<?, ? super T>... rest) {
+                return first.apply(constrainable, listener)
+                    && Arrays.stream(rest)
+                             .map(constraint -> constraint.apply(constrainable, listener))
+                             .allMatch(Specifications.isEqual(true));
+            }
+        };
     }
 
     /**
