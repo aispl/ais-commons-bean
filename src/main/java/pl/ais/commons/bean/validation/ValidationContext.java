@@ -15,13 +15,14 @@ import java.util.Arrays;
 /**
  * Validation context.
  *
+ * @param <T> determines the type of validated object
  * @author Warlock, AIS.PL
  * @since 1.0.1
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public final class ValidationContext implements AutoCloseable, ValidationListener {
+public final class ValidationContext<T> implements AutoCloseable, ValidationListener {
 
-    private final Object target;
+    private final T target;
 
     private final TraverseListener traverseListener;
 
@@ -32,7 +33,7 @@ public final class ValidationContext implements AutoCloseable, ValidationListene
      *
      * @param object the object which will be validated
      */
-    private ValidationContext(final Object object) {
+    private ValidationContext(final T object) {
         super();
         traverseListener = new TraverseListener();
         target = Facade.over(object, traverseListener);
@@ -44,35 +45,33 @@ public final class ValidationContext implements AutoCloseable, ValidationListene
      * @param object the object which will be validated
      * @return newly created validation context
      */
-    public static ValidationContext validationOf(final Object object) {
-        return new ValidationContext(object);
+    public static <T> ValidationContext validationOf(final T object) {
+        return new ValidationContext<>(object);
     }
 
     /**
      * Decorates given values to allow validation of all of them against some constraint.
      *
-     * @param <T>    the type of constrainable values
      * @param first  first constrainable value
      * @param second second constrainable value
      * @param rest   remaining constrainable values
      * @return decorated collection of values
      */
-    public <T> Validatable<T> allOf(final T first, final T second, final T... rest) {
-        final Constrainable<T> constrainable = ConstrainableCollection.allOf(first, second, rest);
+    public <V> Validatable<V> allOf(final V first, final V second, final V... rest) {
+        final Constrainable<V> constrainable = ConstrainableCollection.allOf(first, second, rest);
         return validatable(constrainable);
     }
 
     /**
      * Decorates given values to allow validation of any of them against some constraint.
      *
-     * @param <T>    the type of constrainable values
      * @param first  first constrainable value
      * @param second second constrainable value
      * @param rest   remaining constrainable values
      * @return decorated collection of values
      */
-    public <T> Validatable<T> anyOf(final T first, final T second, final T... rest) {
-        final Constrainable<T> constrainable = ConstrainableCollection.anyOf(first, second, rest);
+    public <V> Validatable<V> anyOf(final V first, final V second, final V... rest) {
+        final Constrainable<V> constrainable = ConstrainableCollection.anyOf(first, second, rest);
         return validatable(constrainable);
     }
 
@@ -100,7 +99,7 @@ public final class ValidationContext implements AutoCloseable, ValidationListene
      * @return this instance (for method invocation chaining)
      */
     @SuppressWarnings("hiding")
-    public ValidationContext observedBy(@Nonnull final ValidationListener... listeners) {
+    public ValidationContext<T> observedBy(@Nonnull final ValidationListener... listeners) {
         this.listeners = Arrays.copyOf(listeners, listeners.length);
         return this;
     }
@@ -118,24 +117,23 @@ public final class ValidationContext implements AutoCloseable, ValidationListene
     /**
      * Returns the validation subject.
      *
-     * @param <T> the type of validation subject
      * @return the validation subject
      */
-    public <T> T subject() {
-        return (T) target;
+    public T subject() {
+        return target;
     }
 
-    private <T> Validatable<T> validatable(final Constrainable<T> constrainable) {
+    private <V> Validatable<V> validatable(final Constrainable<V> constrainable) {
         final ValidationListener listener = this;
-        return new Validatable<T>() {
+        return new Validatable<V>() {
 
             @Override
-            public Constrainable<T> get() {
+            public Constrainable<V> get() {
                 return constrainable;
             }
 
             @Override
-            public boolean satisfies(@Nonnull final Constraint<?, ? super T> first, final Constraint<?, ? super T>... rest) {
+            public boolean satisfies(@Nonnull final Constraint<?, ? super V> first, final Constraint<?, ? super V>... rest) {
                 return first.apply(constrainable, listener)
                     && Arrays.stream(rest)
                              .map(constraint -> constraint.apply(constrainable, listener))
@@ -150,8 +148,8 @@ public final class ValidationContext implements AutoCloseable, ValidationListene
      * @param value the value which will be constrained
      * @return decorated value
      */
-    public <T> Validatable<T> valueOf(final T value) {
-        final Constrainable<T> constrainable = new ConstrainableValue<>(traverseListener.asPath(), value);
+    public <V> Validatable<V> valueOf(final V value) {
+        final Constrainable<V> constrainable = new ConstrainableValue<>(traverseListener.asPath(), value);
         return validatable(constrainable);
     }
 
