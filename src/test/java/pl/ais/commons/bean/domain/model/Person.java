@@ -1,12 +1,15 @@
 package pl.ais.commons.bean.domain.model;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * @author Warlock, AIS.PL
  * @since 1.2.2
  */
 public class Person {
+
+    private List<Activity> activities;
 
     private LocalDate dateOfBirth;
 
@@ -15,6 +18,10 @@ public class Person {
     private String name;
 
     private String notes;
+
+    public List<Activity> getActivities() {
+        return activities;
+    }
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
@@ -30,6 +37,10 @@ public class Person {
 
     public String getNotes() {
         return notes;
+    }
+
+    public void setActivities(final List<Activity> activities) {
+        this.activities = activities;
     }
 
     public void setDateOfBirth(final LocalDate dateOfBirth) {
