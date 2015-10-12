@@ -7,6 +7,7 @@ import pl.ais.commons.domain.specification.Specifications;
 
 import javax.annotation.Nonnull;
 import javax.money.MonetaryAmount;
+import java.util.function.Predicate;
 
 /**
  * Provides set of useful {@link SimpleConstraint} implementations.
@@ -55,6 +56,16 @@ public final class Constraints {
      */
     public static <T extends Comparable<? super T>> Constraint<?, T> before(final T bound) {
         return new SimpleConstraint<>("before", Specifications.before(bound));
+    }
+
+    /**
+     * @param name        name of the constraint
+     * @param determinant predicate being determinant of the constraint
+     * @param <T>         type of the values to be constrained
+     * @return constraint verifying if constrainable value matches given determinant
+     */
+    public static <T> Constraint<?, T> constraint(final String name, final Predicate<T> determinant) {
+        return new SimpleConstraint<>(name, determinant);
     }
 
     /**
