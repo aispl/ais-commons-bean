@@ -38,7 +38,7 @@ public final class Constraints {
      * @return constraint matched if and only if all of the enclosed constraints are matched
      */
     public static <T> Constraint<?, ? super T> allOf(@Nonnull final Constraint<?, T> first, final Constraint<?, T>... rest) {
-        return new AllOfConstraint(false, first, rest);
+        return new AllOfConstraint<>(false, first, rest);
     }
 
     /**
@@ -47,7 +47,7 @@ public final class Constraints {
      * @return constraint matched if and only if any of the enclosed constraints are matched
      */
     public static <T> Constraint<?, ? super T> anyOf(@Nonnull final Constraint<?, T> first, final Constraint<?, T>... rest) {
-        return new AnyOfConstraint(false, first, rest);
+        return new AnyOfConstraint<>(false, first, rest);
     }
 
     /**
@@ -180,36 +180,10 @@ public final class Constraints {
     }
 
     /**
-     * Creates and returns the constraint being negation of given constraint.
-     *
-     * @param constraint the constraint to negate
-     * @return newly created constraint being negation of given constraint
-     */
-    /*
-    public static <V> SimpleConstraint<V> not(final SimpleConstraint<V> constraint) {
-        // Adjust the name of the constraint, ...
-        char[] name = constraint.getName().toCharArray();
-        final StringBuilder builder = new StringBuilder();
-
-        // ... by cutting off / adding the 'not' prefix, ...
-        if ((name.length >= 3) && ('n' == name[0]) && ('o' == name[1]) && ('t' == name[2])) {
-            name = Arrays.copyOfRange(name, 3, name.length);
-        } else {
-            builder.append("not");
-        }
-
-        // ... capitalizing the remainder, and adding it to the result name ...
-        name[0] = Character.toUpperCase(name[0]);
-        builder.append(name);
-        return new SimpleConstraint<>(builder.toString(), new NotSpecification<>(constraint.getDeterminant()));
-    }
-    */
-
-    /**
      * @return constraint verifying if string contains valid email address.
      */
     @SuppressWarnings("unchecked")
-    public static <T extends CharSequence> SimpleConstraint<T> validEmail() {
+    public static SimpleConstraint<CharSequence> validEmail() {
         return new SimpleConstraint<>("validEmail", Specifications.validEmail());
     }
 

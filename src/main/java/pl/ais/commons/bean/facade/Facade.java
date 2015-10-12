@@ -36,6 +36,7 @@ public final class Facade {
      * @param <T>      type of the instance to be proxied
      * @return newly created facade (proxy) build over given instance of class {@literal T}
      */
+    @SuppressWarnings("unchecked")
     public static <S, T extends S> S over(@Nonnull final T instance, final TraverseListener listener) {
 
         // Create CGLIB Enhancer using the instance class as superclass of the proxy we intend to create, ...

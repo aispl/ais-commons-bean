@@ -42,10 +42,11 @@ public final class ValidationContext<T> implements AutoCloseable, ValidationList
     /**
      * Creates and returns the validation context for given object.
      *
+     * @param <B>    type of the object to be validated
      * @param object the object which will be validated
      * @return newly created validation context
      */
-    public static <T> ValidationContext validationOf(final T object) {
+    public static <B> ValidationContext<B> validationOf(final B object) {
         return new ValidationContext<>(object);
     }
 

@@ -102,8 +102,8 @@ public abstract class ConstrainableCollection<T> implements Constrainable<T> {
      * {@inheritDoc}
      */
     @Override
-    public <R> R accept(@Nonnull final ConstrainableVisitor visitor) {
-        return (R) visitor.visit(this);
+    public <R> R accept(@Nonnull final ConstrainableVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 
 }

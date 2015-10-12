@@ -25,7 +25,7 @@ public interface Constrainable<T> extends Function<Constraint<?, ? super T>, Boo
      * @param visitor the visitor to be accepted
      * @return the value provided by the visitor
      */
-    <R> R accept(@Nonnull ConstrainableVisitor visitor);
+    <R> R accept(@Nonnull ConstrainableVisitor<R> visitor);
 
     /**
      * Applies given constraint to this constrainable.
