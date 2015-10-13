@@ -135,10 +135,12 @@ public final class ValidationContext<T> implements AutoCloseable, ValidationList
 
             @Override
             public boolean satisfies(@Nonnull final Constraint<?, ? super V> first, final Constraint<?, ? super V>... rest) {
-                return first.apply(constrainable, listener)
-                    && Arrays.stream(rest)
-                             .map(constraint -> constraint.apply(constrainable, listener))
-                             .allMatch(Specifications.isEqual(true));
+                final boolean result =
+                    first.apply(constrainable, listener) && Arrays.stream(rest)
+                                                                  .map(constraint -> constraint.apply(constrainable, listener))
+                                                                  .allMatch(Specifications.isEqual(true));
+                traverseListener.reset();
+                return result;
             }
         };
     }
