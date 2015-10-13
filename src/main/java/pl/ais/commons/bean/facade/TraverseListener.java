@@ -7,6 +7,8 @@ import java.util.Stack;
 import static java.util.stream.Collectors.joining;
 
 /**
+ * Listener tracking down the method calls to provide path to accessed property.
+ *
  * @author Warlock, AIS.PL
  * @since 1.2.1
  */
@@ -15,6 +17,10 @@ public final class TraverseListener {
 
     private final Stack<String> stack = new Stack<>();
 
+
+    /**
+     * @return path to the accessed property
+     */
     public String asPath() {
         final String path = stack.stream().collect(joining("."));
         stack.clear();
