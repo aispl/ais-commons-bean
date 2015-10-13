@@ -67,4 +67,11 @@ public final class TraverseListener {
         }
     }
 
+    /**
+     * Resets the listener to the initial state.
+     */
+    public void reset() {
+        stack.clear();
+    }
+
 }
