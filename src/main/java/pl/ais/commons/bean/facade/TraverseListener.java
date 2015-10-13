@@ -74,4 +74,12 @@ public final class TraverseListener {
         stack.clear();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("Traversed path: '%s'", stack.stream().collect(joining(".")));
+    }
+
 }
