@@ -1,7 +1,9 @@
 package pl.ais.commons.bean.domain.model;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Warlock, AIS.PL
@@ -11,7 +13,11 @@ public class Person {
 
     private List<Activity> activities;
 
+    private Map<String, Integer> colleagues;
+
     private LocalDate dateOfBirth;
+
+    private Map<Integer, String> favorites;
 
     private int height;
 
@@ -23,8 +29,16 @@ public class Person {
         return activities;
     }
 
+    public Map<String, Integer> getColleagues() {
+        return colleagues;
+    }
+
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
+    }
+
+    public Map<Integer, String> getFavorites() {
+        return favorites;
     }
 
     public int getHeight() {
@@ -43,8 +57,16 @@ public class Person {
         this.activities = activities;
     }
 
+    public void setColleagues(final Map<String, Integer> colleagues) {
+        this.colleagues = colleagues;
+    }
+
     public void setDateOfBirth(final LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public void setFavorites(final Map<Integer, String> favorites) {
+        this.favorites = favorites;
     }
 
     public void setHeight(final int height) {
