@@ -5,6 +5,7 @@ import pl.ais.commons.bean.validation.Constraint;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Base class to be extended by constraints.
@@ -29,6 +30,15 @@ abstract class AbstractConstraint<C extends Constraint<C, T>, T> implements Cons
         this.message = message;
         this.messageParameters = Arrays.copyOf(messageParameters, messageParameters.length);
         this.active = active;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Constraint<?, T> and(@Nonnull final Constraint<?, T> other) {
+        Objects.requireNonNull(other, "Constraint is required.");
+        return new AllOfConstraint<>(false, this, other);
     }
 
     /**
@@ -61,6 +71,13 @@ abstract class AbstractConstraint<C extends Constraint<C, T>, T> implements Cons
     @Override
     public boolean isActive() {
         return active;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Constraint<?, T> or(@Nonnull final Constraint<?, T> other) {
+        return new AnyOfConstraint<>(false, this, other);
     }
 
 }

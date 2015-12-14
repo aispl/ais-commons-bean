@@ -117,6 +117,14 @@ public final class AnyOfConstraint<T> extends AbstractConstraint<AnyOfConstraint
      * {@inheritDoc}
      */
     @Override
+    public Constraint<?, T> negate() {
+        return new SimpleConstraint<>(getNegatedName(), candidate -> !test(candidate));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean test(@Nullable final T candidate) {
         return Arrays.stream(constraints)
                      .filter(Constraint::isActive)

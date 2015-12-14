@@ -159,4 +159,12 @@ public final class AllOfConstraint<T> extends AbstractConstraint<AllOfConstraint
         return new AllOfConstraint<>(name, constraints, active, thorough, messageParameters, message);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Constraint<?, T> negate() {
+        return new SimpleConstraint<>(getNegatedName(), candidate -> !test(candidate));
+    }
+
 }

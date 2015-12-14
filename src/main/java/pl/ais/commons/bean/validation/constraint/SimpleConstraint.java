@@ -1,5 +1,7 @@
 package pl.ais.commons.bean.validation.constraint;
 
+import pl.ais.commons.bean.validation.Constraint;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
@@ -60,6 +62,11 @@ public final class SimpleConstraint<T> extends AbstractConstraint<SimpleConstrai
     @Override
     public int hashCode() {
         return Objects.hash(name, determinant);
+    }
+
+    @Override
+    public Constraint<?, T> negate() {
+        return new SimpleConstraint<>(getNegatedName(), determinant);
     }
 
     /**

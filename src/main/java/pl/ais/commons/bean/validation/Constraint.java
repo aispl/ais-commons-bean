@@ -6,6 +6,7 @@ import pl.ais.commons.bean.validation.event.ValidationListener;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.function.BiFunction;
 
 /**
@@ -17,6 +18,14 @@ import java.util.function.BiFunction;
  * @since 1.2.1
  */
 public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Constrainable<? extends T>, ValidationListener, Boolean> {
+
+    /**
+     * Creates and returns composite constraint being conjunction of this and provided constraint.
+     *
+     * @param other constraint to be used for building conjunction with this one
+     * @return constraint being conjunction of this and provided constraint
+     */
+    Constraint<?, T> and(@Nonnull final Constraint<?, T> other);
 
     /**
      * Verifies if given constrainable matches the constraint and reports violation if needed.
@@ -51,11 +60,47 @@ public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Co
     String getName();
 
     /**
+     * Negates the name of the constraint by adding/removing 'not' at the beginning of the name.
+     *
+     * @return negated constraint name
+     */
+    default String getNegatedName() {
+        char[] name = getName().toCharArray();
+        final StringBuilder builder = new StringBuilder();
+
+        // ... by cutting off / adding the 'not' prefix, ...
+        if ((name.length >= 3) && ('n' == name[0]) && ('o' == name[1]) && ('t' == name[2])) {
+            name = Arrays.copyOfRange(name, 3, name.length);
+        } else {
+            builder.append("not");
+        }
+
+        name[0] = Character.toUpperCase(name[0]);
+        builder.append(name);
+        return builder.toString();
+    }
+
+    /**
      * Indicates if this constraint is active.
      *
      * @return {@code true} if this constraint is active, {@code false} otherwise
      */
     boolean isActive();
+
+    /**
+     * Creates and returns constraint being negation of this one.
+     *
+     * @return constraint being negation of this one
+     */
+    Constraint<?, T> negate();
+
+    /**
+     * Creates and returns composite constraint being disjunction of this one and provided constraint.
+     *
+     * @param other constraint to be used for building disjunction with this one
+     * @return constraint being disjunction of this one and provided constraint
+     */
+    Constraint<?, T> or(@Nonnull final Constraint<?, T> other);
 
     /**
      * Evaluates this constraint on the given argument.
