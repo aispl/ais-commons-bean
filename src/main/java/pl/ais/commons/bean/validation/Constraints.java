@@ -10,7 +10,7 @@ import javax.money.MonetaryAmount;
 import java.util.function.Predicate;
 
 /**
- * Provides set of useful {@link SimpleConstraint} implementations.
+ * Provides set of useful {@link Constraint} implementations.
  *
  * @author Warlock, AIS.PL
  * @since 1.0.1
@@ -25,14 +25,16 @@ public final class Constraints {
     }
 
     /**
-     * @param bound the bound
-     * @return constraint verifying if constrainable value is after predefined bound
+     * @param <T>      type of the values to be constrained
+     * @param boundary the boundary
+     * @return constraint verifying if constrainable value is after predefined boundary
      */
-    public static <T extends Comparable<? super T>> Constraint<?, T> after(final T bound) {
-        return new SimpleConstraint<>("after", Specifications.after(bound));
+    public static <T extends Comparable<? super T>> Constraint<?, T> after(final T boundary) {
+        return new SimpleConstraint<>("after", Specifications.after(boundary));
     }
 
     /**
+     * @param <T>   the type of values supported by the constraints
      * @param first first constraint to be enclosed
      * @param rest  remaining constraints to be enclosed
      * @return constraint matched if and only if all of the enclosed constraints are matched
@@ -42,6 +44,7 @@ public final class Constraints {
     }
 
     /**
+     * @param <T>   the type of values supported by the constraints
      * @param first first constraint to be enclosed
      * @param rest  remaining constraints to be enclosed
      * @return constraint matched if and only if any of the enclosed constraints are matched
@@ -51,17 +54,18 @@ public final class Constraints {
     }
 
     /**
-     * @param bound the bound
+     * @param <T>      type of the values to be constrained
+     * @param boundary the boundary
      * @return constraint verifying if constrainable value is before predefined bound
      */
-    public static <T extends Comparable<? super T>> Constraint<?, T> before(final T bound) {
-        return new SimpleConstraint<>("before", Specifications.before(bound));
+    public static <T extends Comparable<? super T>> Constraint<?, T> before(final T boundary) {
+        return new SimpleConstraint<>("before", Specifications.before(boundary));
     }
 
     /**
+     * @param <T>         type of the values to be constrained
      * @param name        name of the constraint
      * @param determinant predicate being determinant of the constraint
-     * @param <T>         type of the values to be constrained
      * @return constraint verifying if constrainable value matches given determinant
      */
     public static <T> Constraint<?, T> constraint(final String name, final Predicate<T> determinant) {
@@ -69,13 +73,15 @@ public final class Constraints {
     }
 
     /**
+     * @param <T> type of the values to be constrained
      * @return constraint verifying if constrainable value is empty (applicable to Collection, Map or String)
      */
-    public static <T> SimpleConstraint<T> empty() {
+    public static <T> Constraint<?, T> empty() {
         return new SimpleConstraint<>("empty", Specifications.empty());
     }
 
     /**
+     * @param <T>        type of the values to be constrained
      * @param upperLimit the upper limit for character sequence length (inclusive)
      * @return constraint verifying if character sequence is limited to predefined number of characters
      */
@@ -85,38 +91,43 @@ public final class Constraints {
     }
 
     /**
-     * @param bound the bound
-     * @return constraint verifying if constrainable value is greater than given bound
+     * @param <T>      type of the values to be constrained
+     * @param boundary the boundary
+     * @return constraint verifying if constrainable value is greater than given boundary
      */
-    public static <T extends Number & Comparable<? super T>> Constraint<?, T> greaterThan(final T bound) {
-        return new SimpleConstraint<>("greaterThan", Specifications.after(bound));
+    public static <T extends Number & Comparable<? super T>> Constraint<?, T> greaterThan(final T boundary) {
+        return new SimpleConstraint<>("greaterThan", Specifications.after(boundary));
     }
 
     /**
-     * @param bound the bound
-     * @return constraint verifying if constrainable value is greater than given bound
+     * @param <T>      type of the values to be constrained
+     * @param boundary the boundary
+     * @return constraint verifying if constrainable value is greater than given boundary
      */
-    public static <T extends MonetaryAmount> Constraint<?, T> greaterThan(final T bound) {
-        return new SimpleConstraint<>("greaterThan", Specifications.after(bound));
+    public static <T extends MonetaryAmount> Constraint<?, T> greaterThan(final T boundary) {
+        return new SimpleConstraint<>("greaterThan", Specifications.after(boundary));
     }
 
     /**
-     * @param bound the bound
-     * @return constraint verifying if constrainable value is greater than or equal to the given bound
+     * @param <T>      type of the values to be constrained
+     * @param boundary the boundary
+     * @return constraint verifying if constrainable value is greater than or equal to the given boundary
      */
-    public static <T extends Number & Comparable<T>> Constraint<?, T> greaterThanOrEqualTo(final T bound) {
-        return new SimpleConstraint<>("greaterThanOrEqualTo", Specifications.before(bound).negate());
+    public static <T extends Number & Comparable<T>> Constraint<?, T> greaterThanOrEqualTo(final T boundary) {
+        return new SimpleConstraint<>("greaterThanOrEqualTo", Specifications.before(boundary).negate());
     }
 
     /**
-     * @param bound the bound
-     * @return constraint verifying if constrainable value is greater than or equal to the given bound
+     * @param <T>      type of the values to be constrained
+     * @param boundary the boundary
+     * @return constraint verifying if constrainable value is greater than or equal to the given boundary
      */
-    public static <T extends MonetaryAmount> Constraint<?, T> greaterThanOrEqualTo(final T bound) {
-        return new SimpleConstraint<>("greaterThanOrEqualTo", Specifications.before(bound).negate());
+    public static <T extends MonetaryAmount> Constraint<?, T> greaterThanOrEqualTo(final T boundary) {
+        return new SimpleConstraint<>("greaterThanOrEqualTo", Specifications.before(boundary).negate());
     }
 
     /**
+     * @param <T>   type of the values to be constrained
      * @param value the value
      * @return constraint verifying if constrainable value is equal to predefined value
      */
@@ -125,43 +136,57 @@ public final class Constraints {
     }
 
     /**
-     * @param bound the bound
-     * @return constraint verifying if constrainable value is less than given bound
+     * @param <T>      type of the values to be constrained
+     * @param boundary the boundary
+     * @return constraint verifying if constrainable value is less than given boundary
      */
-    public static <T extends Number & Comparable<? super T>> Constraint<?, T> lessThan(final T bound) {
-        return new SimpleConstraint<>("lessThan", Specifications.before(bound));
+    public static <T extends Number & Comparable<? super T>> Constraint<?, T> lessThan(final T boundary) {
+        return new SimpleConstraint<>("lessThan", Specifications.before(boundary));
     }
 
     /**
-     * @param bound the bound
-     * @return constraint verifying if constrainable value is less than given bound
+     * @param <T>      type of the values to be constrained
+     * @param boundary the boundary
+     * @return constraint verifying if constrainable value is less than given boundary
      */
-    public static <T extends MonetaryAmount> Constraint<?, T> lessThan(final T bound) {
-        return new SimpleConstraint<>("lessThan", Specifications.before(bound));
+    public static <T extends MonetaryAmount> Constraint<?, T> lessThan(final T boundary) {
+        return new SimpleConstraint<>("lessThan", Specifications.before(boundary));
     }
 
     /**
-     * @param bound the bound
-     * @return constraint verifying if constrainable value is less than or equal to the given bound
+     * @param <T>      type of the values to be constrained
+     * @param boundary the boundary
+     * @return constraint verifying if constrainable value is less than or equal to the given boundary
      */
-    public static <T extends Number & Comparable<? super T>> Constraint<?, T> lessThanOrEqualTo(final T bound) {
-        return new SimpleConstraint<>("lessThanOrEqualTo", Specifications.after(bound).negate());
+    public static <T extends Number & Comparable<? super T>> Constraint<?, T> lessThanOrEqualTo(final T boundary) {
+        return new SimpleConstraint<>("lessThanOrEqualTo", Specifications.after(boundary).negate());
     }
 
     /**
-     * @param bound the bound
-     * @return constraint verifying if constrainable value is less than or equal to the given bound
+     * @param <T>      type of the values to be constrained
+     * @param boundary the boundary
+     * @return constraint verifying if constrainable value is less than or equal to the given boundary
      */
-    public static <T extends MonetaryAmount> Constraint<?, T> lessThanOrEqualTo(final T bound) {
-        return new SimpleConstraint<>("lessThanOrEqualTo", Specifications.after(bound).negate());
+    public static <T extends MonetaryAmount> Constraint<?, T> lessThanOrEqualTo(final T boundary) {
+        return new SimpleConstraint<>("lessThanOrEqualTo", Specifications.after(boundary).negate());
     }
 
     /**
+     * @param <T>   type of the values to be constrained
      * @param regex the regular expression
      * @return constraint verifying if constrainable value matches given regular expression
      */
     public static <T extends CharSequence> Constraint<?, T> matches(final String regex) {
         return new SimpleConstraint<>("regex", Specifications.matches(regex));
+    }
+
+    /**
+     * @param <T>        type of the values to be constrained
+     * @param constraint constraint to be negated
+     * @return negation of given constraint
+     */
+    public static <T> Constraint<?, T> not(final Constraint<?, T> constraint) {
+        return constraint.negate();
     }
 
     /**
@@ -183,7 +208,7 @@ public final class Constraints {
      * @return constraint verifying if string contains valid email address.
      */
     @SuppressWarnings("unchecked")
-    public static SimpleConstraint<CharSequence> validEmail() {
+    public static Constraint<?, CharSequence> validEmail() {
         return new SimpleConstraint<>("validEmail", Specifications.validEmail());
     }
 
