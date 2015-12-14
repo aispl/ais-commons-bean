@@ -7,7 +7,6 @@ import pl.ais.commons.bean.validation.event.ValidationListener;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.BiFunction;
-import java.util.function.Predicate;
 
 /**
  * Defines the API contract for the Constraint.
@@ -17,7 +16,7 @@ import java.util.function.Predicate;
  * @author Warlock, AIS.PL
  * @since 1.2.1
  */
-public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Constrainable<? extends T>, ValidationListener, Boolean>, Predicate<T> {
+public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Constrainable<? extends T>, ValidationListener, Boolean> {
 
     /**
      * Verifies if given constrainable matches the constraint and reports violation if needed.
@@ -67,7 +66,6 @@ public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Co
      * @param candidate value to be matched against this constraint
      * @return {@code true} if given argument matches this constraint, {@code false} otherwise
      */
-    @Override
     boolean test(@Nullable T candidate);
 
     /**

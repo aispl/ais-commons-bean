@@ -46,7 +46,8 @@ public abstract class ConstrainableCollection<T> implements Constrainable<T> {
              */
             @Override
             public Boolean apply(final Constraint<?, ? super T> constraint) {
-                return elements.stream().allMatch(constraint);
+                return elements.stream()
+                               .allMatch(constraint::test);
             }
 
             /**
@@ -82,7 +83,8 @@ public abstract class ConstrainableCollection<T> implements Constrainable<T> {
              */
             @Override
             public Boolean apply(final Constraint<?, ? super T> constraint) {
-                return elements.stream().anyMatch(constraint);
+                return elements.stream()
+                               .anyMatch(constraint::test);
             }
 
             /**
