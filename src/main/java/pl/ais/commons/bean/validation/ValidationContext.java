@@ -70,6 +70,7 @@ public final class ValidationContext<T> implements AutoCloseable, ValidationList
      * @return decorated collection of values
      */
     @SafeVarargs
+    @SuppressWarnings("PMD.UnnecessaryFinalModifier")
     public final <V> Validatable<V> allOf(final V first, final V second, final V... rest) {
         final Constrainable<V> constrainable = ConstrainableCollection.allOf(collectionOf(first, second, rest));
         return validatable(constrainable);
@@ -84,6 +85,7 @@ public final class ValidationContext<T> implements AutoCloseable, ValidationList
      * @return decorated collection of values
      */
     @SafeVarargs
+    @SuppressWarnings("PMD.UnnecessaryFinalModifier")
     public final <V> Validatable<V> anyOf(final V first, final V second, final V... rest) {
         final Constrainable<V> constrainable = ConstrainableCollection.anyOf(collectionOf(first, second, rest));
         return validatable(constrainable);
