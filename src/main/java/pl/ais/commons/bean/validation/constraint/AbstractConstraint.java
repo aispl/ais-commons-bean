@@ -15,6 +15,8 @@ import java.util.Objects;
  */
 abstract class AbstractConstraint<C extends Constraint<C, T>, T> implements Constraint<C, T> {
 
+    protected static final Object[] ZERO_LENGTH_ARRAY = new Object[0];
+
     protected final boolean active;
 
     protected final String message;

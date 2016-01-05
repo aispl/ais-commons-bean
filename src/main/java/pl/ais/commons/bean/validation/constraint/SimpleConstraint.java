@@ -40,7 +40,7 @@ public final class SimpleConstraint<T> extends AbstractConstraint<SimpleConstrai
      * @param determinant predicate being determinant of the constraint
      */
     public SimpleConstraint(@Nonnull final String name, @Nonnull final Predicate<T> determinant) {
-        this(name, determinant, true, new Object[0], null);
+        this(name, determinant, true, ZERO_LENGTH_ARRAY, null);
     }
 
     /**

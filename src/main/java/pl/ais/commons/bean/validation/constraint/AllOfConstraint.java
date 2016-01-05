@@ -45,7 +45,7 @@ public final class AllOfConstraint<T> extends AbstractConstraint<AllOfConstraint
     @SuppressWarnings("unchecked")
     @SafeVarargs
     public AllOfConstraint(final boolean thorough, @Nonnull final Constraint<?, T> first, final Constraint<?, T>... rest) {
-        super("conjunction", true, new Object[0], null);
+        super("conjunction", true, ZERO_LENGTH_ARRAY, null);
 
         // Verify constructor requirements, ...
         Objects.requireNonNull(first, "First constraint is required");

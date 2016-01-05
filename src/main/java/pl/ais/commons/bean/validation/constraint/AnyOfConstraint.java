@@ -46,7 +46,7 @@ public final class AnyOfConstraint<T> extends AbstractConstraint<AnyOfConstraint
     @SuppressWarnings("unchecked")
     @SafeVarargs
     public AnyOfConstraint(final boolean thorough, @Nonnull final Constraint<?, T> first, final Constraint<?, T>... rest) {
-        super("disjunction", true, new Object[0], null);
+        super("disjunction", true, ZERO_LENGTH_ARRAY, null);
 
         // Verify constructor requirements, ...
         Objects.requireNonNull(first, "First constraint is required");
