@@ -4,36 +4,42 @@ import pl.ais.commons.bean.validation.Constraint;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
- * Collection of constrainable values.
+ * Constrainable group of values.
  *
  * @author Warlock, AIS.PL
  * @since 1.2.1
  */
 @SuppressWarnings("PMD.AbstractNaming")
-public abstract class ConstrainableCollection<T> implements Constrainable<T> {
+public abstract class ConstrainableGroup<T> implements Constrainable<T> {
 
-    protected final Collection<? extends T> elements;
+    protected final Collection<T> elements;
 
-    protected ConstrainableCollection(@Nonnull final Collection<? extends T> elements) {
-        this.elements = new ArrayList<>(elements);
+    protected ConstrainableGroup(final T first, final T second, final T... rest) {
+        elements = new ArrayList<>(2 + rest.length);
+        elements.add(first);
+        elements.add(second);
+        elements.addAll(Arrays.asList(rest));
     }
 
     /**
-     * Creates and returns constrainable over given elements.
+     * Creates and returns constrainable over group of given values.
      *
      * <p>Constrainable created by this method is satisfying some constraint if and only if all constrainable values
      * enclosed by it are satisfying the constraint.
      *
-     * @param <T>      the type of constrainable values
-     * @param elements elements to be constrained
-     * @return constrainable over given elements
+     * @param <T>    the type of constrainable values
+     * @param first  first constrainable value
+     * @param second second constrainable value
+     * @param rest   remaining constrainable values
+     * @return constrainable over group of given values
      */
-    public static <T> Constrainable<T> allOf(final Collection<? extends T> elements) {
-        return new ConstrainableCollection<T>(elements) {
+    public static <T> Constrainable<T> allOf(final T first, final T second, final T... rest) {
+        return new ConstrainableGroup<T>(first, second, rest) {
 
             /**
              * {@inheritDoc}
@@ -51,24 +57,26 @@ public abstract class ConstrainableCollection<T> implements Constrainable<T> {
             public String toString() {
                 return elements.stream()
                                .map(element -> (null == element) ? "null" : "'" + element + "'")
-                               .collect(Collectors.joining(", ", "All values of Collection composed of: [", "]"));
+                               .collect(Collectors.joining(", ", "All values of group composed of: [", "]"));
             }
 
         };
     }
 
     /**
-     * Creates and returns constrainable over given elements.
+     * Creates and returns constrainable over group of given values.
      *
      * <p>Constrainable created by this method is satisfying some constraint if and only if any constrainable value
      * enclosed by it is satisfying the constraint.
      *
-     * @param <T>      the type of constrainable values
-     * @param elements elements to be constrained
-     * @return constrainable over any element of given collection of values
+     * @param <T>    the type of constrainable values
+     * @param first  first constrainable value
+     * @param second second constrainable value
+     * @param rest   remaining constrainable values
+     * @return constrainable over group of given values
      */
-    public static <T> Constrainable<T> anyOf(final Collection<? extends T> elements) {
-        return new ConstrainableCollection<T>(elements) {
+    public static <T> Constrainable<T> anyOf(final T first, final T second, final T... rest) {
+        return new ConstrainableGroup<T>(first, second, rest) {
 
             /**
              * {@inheritDoc}
@@ -86,7 +94,7 @@ public abstract class ConstrainableCollection<T> implements Constrainable<T> {
             public String toString() {
                 return elements.stream()
                                .map(element -> (null == element) ? "null" : "'" + element + "'")
-                               .collect(Collectors.joining(", ", "Any value from Collection composed of : [", "]"));
+                               .collect(Collectors.joining(", ", "Any value from group composed of : [", "]"));
             }
 
         };

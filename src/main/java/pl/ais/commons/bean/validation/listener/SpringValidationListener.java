@@ -3,7 +3,7 @@ package pl.ais.commons.bean.validation.listener;
 import org.springframework.validation.Errors;
 import pl.ais.commons.bean.validation.Constraint;
 import pl.ais.commons.bean.validation.constrainable.Constrainable;
-import pl.ais.commons.bean.validation.constrainable.ConstrainableCollection;
+import pl.ais.commons.bean.validation.constrainable.ConstrainableGroup;
 import pl.ais.commons.bean.validation.constrainable.ConstrainableValue;
 import pl.ais.commons.bean.validation.constrainable.ConstrainableVisitor;
 import pl.ais.commons.bean.validation.event.ConstraintViolated;
@@ -51,7 +51,7 @@ public final class SpringValidationListener implements ValidationListener {
         }
 
         @Override
-        public Void visit(final ConstrainableValue constrainable) {
+        public Void visit(final ConstrainableValue<?> constrainable) {
             final String message = constraint.getMessage();
             final Object[] messageParameters = constraint.getMessageParameters();
             errors.rejectValue(constrainable.getId(), constraint.getName(), messageParameters,
@@ -60,7 +60,7 @@ public final class SpringValidationListener implements ValidationListener {
         }
 
         @Override
-        public Void visit(final ConstrainableCollection constrainable) {
+        public Void visit(final ConstrainableGroup<?> constrainable) {
             final String message = constraint.getMessage();
             final Object[] messageParameters = constraint.getMessageParameters();
             errors.reject(constraint.getName(), messageParameters,

@@ -21,12 +21,12 @@ public interface ConstrainableVisitor<R> {
     R visit(@Nonnull ConstrainableValue<?> constrainable);
 
     /**
-     * Visits given constrainable collection.
+     * Visits given constrainable group.
      *
-     * @param constrainable the constrainable collection to be visited
+     * @param constrainable the constrainable group to be visited
      * @return value specific for the concrete visitor implementation, can be {@code null}
      */
     @CheckForNull
-    R visit(@Nonnull ConstrainableCollection<?> constrainable);
+    R visit(@Nonnull ConstrainableGroup<?> constrainable);
 
 }
