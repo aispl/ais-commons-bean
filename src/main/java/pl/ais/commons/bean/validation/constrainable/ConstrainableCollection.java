@@ -4,7 +4,6 @@ import pl.ais.commons.bean.validation.Constraint;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -17,29 +16,24 @@ import java.util.stream.Collectors;
 @SuppressWarnings("PMD.AbstractNaming")
 public abstract class ConstrainableCollection<T> implements Constrainable<T> {
 
-    protected final Collection<T> elements;
+    protected final Collection<? extends T> elements;
 
-    protected ConstrainableCollection(final T first, final T second, final T... rest) {
-        elements = new ArrayList<>(2 + rest.length);
-        elements.add(first);
-        elements.add(second);
-        elements.addAll(Arrays.asList(rest));
+    protected ConstrainableCollection(@Nonnull final Collection<? extends T> elements) {
+        this.elements = new ArrayList<>(elements);
     }
 
     /**
-     * Creates and returns constrainable over collection of all given values.
+     * Creates and returns constrainable over given elements.
      *
      * <p>Constrainable created by this method is satisfying some constraint if and only if all constrainable values
      * enclosed by it are satisfying the constraint.
      *
-     * @param <T>    the type of constrainable values
-     * @param first  first constrainable value
-     * @param second second constrainable value
-     * @param rest   remaining constrainable values
-     * @return constrainable over collection of all given values
+     * @param <T>      the type of constrainable values
+     * @param elements elements to be constrained
+     * @return constrainable over given elements
      */
-    public static <T> Constrainable<T> allOf(final T first, final T second, final T... rest) {
-        return new ConstrainableCollection<T>(first, second, rest) {
+    public static <T> Constrainable<T> allOf(final Collection<? extends T> elements) {
+        return new ConstrainableCollection<T>(elements) {
 
             /**
              * {@inheritDoc}
@@ -64,19 +58,17 @@ public abstract class ConstrainableCollection<T> implements Constrainable<T> {
     }
 
     /**
-     * Creates and returns constrainable over any element of given collection values.
+     * Creates and returns constrainable over given elements.
      *
      * <p>Constrainable created by this method is satisfying some constraint if and only if any constrainable value
      * enclosed by it is satisfying the constraint.
      *
-     * @param <T>    the type of constrainable values
-     * @param first  first constrainable value
-     * @param second second constrainable value
-     * @param rest   remaining constrainable values
+     * @param <T>      the type of constrainable values
+     * @param elements elements to be constrained
      * @return constrainable over any element of given collection of values
      */
-    public static <T> Constrainable<T> anyOf(final T first, final T second, final T... rest) {
-        return new ConstrainableCollection<T>(first, second, rest) {
+    public static <T> Constrainable<T> anyOf(final Collection<? extends T> elements) {
+        return new ConstrainableCollection<T>(elements) {
 
             /**
              * {@inheritDoc}

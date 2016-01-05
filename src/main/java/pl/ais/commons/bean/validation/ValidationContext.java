@@ -10,7 +10,9 @@ import pl.ais.commons.bean.validation.event.ValidationListener;
 import pl.ais.commons.domain.specification.Specifications;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Validation context.
@@ -39,6 +41,14 @@ public final class ValidationContext<T> implements AutoCloseable, ValidationList
         target = Facade.over(object, traverseListener);
     }
 
+    private static <V> Collection<V> collectionOf(final V first, final V second, final V... rest) {
+        final Collection<V> result = new ArrayList<>(2 + rest.length);
+        result.add(first);
+        result.add(second);
+        result.addAll(Arrays.asList(rest));
+        return result;
+    }
+
     /**
      * Creates and returns the validation context for given object.
      *
@@ -59,7 +69,7 @@ public final class ValidationContext<T> implements AutoCloseable, ValidationList
      * @return decorated collection of values
      */
     public <V> Validatable<V> allOf(final V first, final V second, final V... rest) {
-        final Constrainable<V> constrainable = ConstrainableCollection.allOf(first, second, rest);
+        final Constrainable<V> constrainable = ConstrainableCollection.allOf(collectionOf(first, second, rest));
         return validatable(constrainable);
     }
 
@@ -72,7 +82,7 @@ public final class ValidationContext<T> implements AutoCloseable, ValidationList
      * @return decorated collection of values
      */
     public <V> Validatable<V> anyOf(final V first, final V second, final V... rest) {
-        final Constrainable<V> constrainable = ConstrainableCollection.anyOf(first, second, rest);
+        final Constrainable<V> constrainable = ConstrainableCollection.anyOf(collectionOf(first, second, rest));
         return validatable(constrainable);
     }
 
