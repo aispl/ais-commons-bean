@@ -110,6 +110,7 @@ public final class ValidationContext<T> implements AutoCloseable, ValidationList
         Arrays.stream(listeners).forEachOrdered(listeners -> listeners.constraintViolated(event));
     }
 
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public <V> void forEach(final Collection<V> elements, final Consumer<ValidationContext<V>> delegate) {
         final String basePath = traverseListener.asPath();
         final Iterator<V> element = elements.iterator();
