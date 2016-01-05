@@ -22,6 +22,7 @@ public class SpringValidationListenerExpectations {
     /**
      * Verifies if constraint violated by collection of properties' values is reported as global error.
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void shouldReportInvalidCollectionOfPropertiesAsGlobalError() {
 
@@ -46,6 +47,7 @@ public class SpringValidationListenerExpectations {
     /**
      * Verifies if constraint violated by property value is reported as field error.
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void shouldReportInvalidPropertyAsFieldError() {
         final Person person = new Person();

@@ -9,6 +9,8 @@ import java.util.Collection;
 
 import static pl.ais.commons.bean.validation.Constraints.lessThan;
 import static pl.ais.commons.bean.validation.Constraints.required;
+import static pl.ais.commons.bean.validation.constrainable.ConstrainableCollection.allOf;
+import static pl.ais.commons.bean.validation.constrainable.ConstrainableCollection.anyOf;
 
 /**
  * @author Warlock, AIS.PL
@@ -22,7 +24,7 @@ public class ConstrainableCollectionExpectations {
      */
     @Test
     public void allOfShouldMatchIfAllAreMatching() {
-        final Constrainable constrainable = ConstrainableCollection.allOf(Arrays.asList(Integer.valueOf(3), "Some String", Integer.valueOf(7), new BigDecimal("14.75")));
+        final Constrainable<?> constrainable = allOf(Arrays.asList(Integer.valueOf(3), "Some String", Integer.valueOf(7), new BigDecimal("14.75")));
         Assert.assertTrue(constrainable.apply(required()));
     }
 
@@ -32,7 +34,7 @@ public class ConstrainableCollectionExpectations {
      */
     @Test
     public void allOfShouldNotMatchIfSomeIsNotMatching() {
-        final Constrainable constrainable = ConstrainableCollection.allOf(Arrays.asList(Integer.valueOf(3), "Some String", null, new BigDecimal("14.75")));
+        final Constrainable<?> constrainable = allOf(Arrays.asList(Integer.valueOf(3), "Some String", null, new BigDecimal("14.75")));
         Assert.assertFalse(constrainable.apply(required()));
     }
 
@@ -42,7 +44,7 @@ public class ConstrainableCollectionExpectations {
      */
     @Test
     public void anyOfShouldMatchIfAnyIsMatching() {
-        final Constrainable constrainable = ConstrainableCollection.anyOf(Arrays.asList(3, 5, 7, 14));
+        final Constrainable<Integer> constrainable = anyOf(Arrays.asList(3, 5, 7, 14));
         Assert.assertTrue(constrainable.apply(lessThan(4)));
     }
 
@@ -52,7 +54,7 @@ public class ConstrainableCollectionExpectations {
      */
     @Test
     public void anyOfShouldNotMatchIfAllAreNotMatching() {
-        final Constrainable constrainable = ConstrainableCollection.anyOf(Arrays.asList(3, 5, 7, 14));
+        final Constrainable<Integer> constrainable = anyOf(Arrays.asList(3, 5, 7, 14));
         Assert.assertFalse(constrainable.apply(lessThan(2)));
     }
 
