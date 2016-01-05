@@ -1,8 +1,12 @@
 package pl.ais.commons.bean.validation;
 
 import pl.ais.commons.bean.validation.constrainable.Constrainable;
+import pl.ais.commons.bean.validation.event.ValidationListener;
+import pl.ais.commons.domain.specification.Specifications;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.function.Supplier;
 
 /**
@@ -13,6 +17,37 @@ import java.util.function.Supplier;
  * @since 1.0.1
  */
 public interface Validatable<T> extends Supplier<Constrainable<T>> {
+
+    static <V> Validatable<V> validatable(@Nonnull final Constrainable<V> constrainable,
+                                          @Nonnull final ValidationListener listener,
+                                          @Nullable final Runnable callback) {
+        return new Validatable<V>() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public Constrainable<V> get() {
+                return constrainable;
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public boolean satisfies(@Nonnull final Constraint<?, ? super V> first, final Constraint<?, ? super V>... rest) {
+                try {
+                    return first.apply(constrainable, listener) && Arrays.stream(rest)
+                                                                         .map(constraint -> constraint.apply(constrainable, listener))
+                                                                         .allMatch(Specifications.isEqual(true));
+                } finally {
+                    if (null != callback) {
+                        callback.run();
+                    }
+                }
+            }
+        };
+    }
 
     /**
      * Verifies if this validatable satisfies given constraints.
