@@ -3,8 +3,10 @@ package pl.ais.commons.bean.facade;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.lang.reflect.Method;
 import java.util.Stack;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Stream.concat;
 
 /**
  * Listener tracking down the method calls to provide path to accessed property.
@@ -15,16 +17,27 @@ import static java.util.stream.Collectors.joining;
 @NotThreadSafe
 public final class TraverseListener {
 
+    private final String basePath;
+
     private final Stack<String> stack = new Stack<>();
 
+    public TraverseListener() {
+        this(null);
+    }
+
+    public TraverseListener(final String basePath) {
+        this.basePath = basePath;
+    }
 
     /**
      * @return path to the accessed property
      */
     public String asPath() {
-        final String path = stack.stream().collect(joining("."));
-        stack.clear();
-        return path;
+        try {
+            return toPath();
+        } finally {
+            reset();
+        }
     }
 
     private void handleCollectionOrMapElementAccessor(final Object arg) {
@@ -74,12 +87,17 @@ public final class TraverseListener {
         stack.clear();
     }
 
+    private String toPath() {
+        final Stream<String> elements = (null == basePath) ? stack.stream() : concat(Stream.of(basePath), stack.stream());
+        return elements.collect(joining("."));
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return String.format("Traversed path: '%s'", stack.stream().collect(joining(".")));
+        return String.format("Traversed path: '%s'", toPath());
     }
 
 }
