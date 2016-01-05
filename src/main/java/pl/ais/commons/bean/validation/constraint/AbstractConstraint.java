@@ -38,6 +38,7 @@ abstract class AbstractConstraint<C extends Constraint<C, T>, T> implements Cons
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public Constraint<?, T> and(@Nonnull final Constraint<?, T> other) {
         Objects.requireNonNull(other, "Constraint is required.");
         return new AllOfConstraint<>(false, this, other);
@@ -78,7 +79,9 @@ abstract class AbstractConstraint<C extends Constraint<C, T>, T> implements Cons
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public Constraint<?, T> or(@Nonnull final Constraint<?, T> other) {
+        Objects.requireNonNull(other, "Constraint is required.");
         return new AnyOfConstraint<>(false, this, other);
     }
 

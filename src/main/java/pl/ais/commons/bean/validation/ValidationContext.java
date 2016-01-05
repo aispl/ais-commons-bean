@@ -41,7 +41,8 @@ public final class ValidationContext<T> implements AutoCloseable, ValidationList
         target = Facade.over(object, traverseListener);
     }
 
-    private static <V> Collection<V> collectionOf(final V first, final V second, final V... rest) {
+    @SafeVarargs
+    private static <V> Collection<? extends V> collectionOf(final V first, final V second, final V... rest) {
         final Collection<V> result = new ArrayList<>(2 + rest.length);
         result.add(first);
         result.add(second);
@@ -68,7 +69,8 @@ public final class ValidationContext<T> implements AutoCloseable, ValidationList
      * @param rest   remaining constrainable values
      * @return decorated collection of values
      */
-    public <V> Validatable<V> allOf(final V first, final V second, final V... rest) {
+    @SafeVarargs
+    public final <V> Validatable<V> allOf(final V first, final V second, final V... rest) {
         final Constrainable<V> constrainable = ConstrainableCollection.allOf(collectionOf(first, second, rest));
         return validatable(constrainable);
     }
@@ -81,7 +83,8 @@ public final class ValidationContext<T> implements AutoCloseable, ValidationList
      * @param rest   remaining constrainable values
      * @return decorated collection of values
      */
-    public <V> Validatable<V> anyOf(final V first, final V second, final V... rest) {
+    @SafeVarargs
+    public final <V> Validatable<V> anyOf(final V first, final V second, final V... rest) {
         final Constrainable<V> constrainable = ConstrainableCollection.anyOf(collectionOf(first, second, rest));
         return validatable(constrainable);
     }
@@ -144,7 +147,8 @@ public final class ValidationContext<T> implements AutoCloseable, ValidationList
             }
 
             @Override
-            public boolean satisfies(@Nonnull final Constraint<?, ? super V> first, final Constraint<?, ? super V>... rest) {
+            @SafeVarargs
+            public final boolean satisfies(@Nonnull final Constraint<?, ? super V> first, final Constraint<?, ? super V>... rest) {
                 final boolean result =
                     first.apply(constrainable, listener) && Arrays.stream(rest)
                                                                   .map(constraint -> constraint.apply(constrainable, listener))

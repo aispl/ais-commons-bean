@@ -116,6 +116,14 @@ public final class AllOfConstraint<T> extends AbstractConstraint<AllOfConstraint
      * {@inheritDoc}
      */
     @Override
+    public Constraint<?, T> negate() {
+        return new SimpleConstraint<>(getNegatedName(), candidate -> !test(candidate));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean test(@Nullable final T candidate) {
         return Arrays.stream(constraints)
                      .filter(Constraint::isActive)
@@ -157,14 +165,6 @@ public final class AllOfConstraint<T> extends AbstractConstraint<AllOfConstraint
     @Override
     public AllOfConstraint<T> withMessageParameters(final Object... messageParameters) {
         return new AllOfConstraint<>(name, constraints, active, thorough, messageParameters, message);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Constraint<?, T> negate() {
-        return new SimpleConstraint<>(getNegatedName(), candidate -> !test(candidate));
     }
 
 }

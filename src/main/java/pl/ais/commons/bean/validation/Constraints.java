@@ -39,6 +39,7 @@ public final class Constraints {
      * @param rest  remaining constraints to be enclosed
      * @return constraint matched if and only if all of the enclosed constraints are matched
      */
+    @SafeVarargs
     public static <T> Constraint<?, ? super T> allOf(@Nonnull final Constraint<?, T> first, final Constraint<?, T>... rest) {
         return new AllOfConstraint<>(false, first, rest);
     }
@@ -49,6 +50,7 @@ public final class Constraints {
      * @param rest  remaining constraints to be enclosed
      * @return constraint matched if and only if any of the enclosed constraints are matched
      */
+    @SafeVarargs
     public static <T> Constraint<?, ? super T> anyOf(@Nonnull final Constraint<?, T> first, final Constraint<?, T>... rest) {
         return new AnyOfConstraint<>(false, first, rest);
     }
