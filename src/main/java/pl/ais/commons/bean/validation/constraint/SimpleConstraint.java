@@ -66,7 +66,7 @@ public final class SimpleConstraint<T> extends AbstractConstraint<SimpleConstrai
 
     @Override
     public Constraint<?, T> negate() {
-        return new SimpleConstraint<>(getNegatedName(), determinant);
+        return new SimpleConstraint<>(getNegatedName(), determinant.negate());
     }
 
     /**
