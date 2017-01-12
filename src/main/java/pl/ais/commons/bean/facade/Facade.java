@@ -45,12 +45,13 @@ public final class Facade {
     public static <S, T extends S> S over(@Nonnull final T instance, final TraverseListener listener) {
 
         // Create CGLIB Enhancer using the instance class as superclass of the proxy we intend to create, ...
-        final Class<? super T> superclass = determineSuperclass((Class<T>) instance.getClass());
+        final Class<T> instanceClass = (Class<T>) instance.getClass();
+        final Class<? super T> superclass = determineSuperclass(instanceClass);
         final Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(superclass);
 
         // ... specify set of interfaces to be implemented by the proxy, ...
-        enhancer.setInterfaces(determineInterfaces(superclass));
+        enhancer.setInterfaces(determineInterfaces(instanceClass));
 
         // ... define the type of callback to be used, ...
         enhancer.setCallbackType(DelegatingMethodInterceptor.class);
