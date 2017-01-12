@@ -23,6 +23,11 @@ public final class Facade {
         throw new AssertionError("Creation of " + getClass().getName() + " instances is forbidden.");
     }
 
+    private static <T> Class[] determineInterfaces(final Class<T> aClass) {
+        final Class<?>[] interfaces = aClass.getInterfaces();
+        return aClass.isInterface() ? new Class[] {aClass} : (0 == interfaces.length ? null : interfaces);
+    }
+
     private static <T> Class<? super T> determineSuperclass(@Nonnull final Class<T> candidate) {
         return is(candidate, inheritable()) ? candidate : determineSuperclass(candidate.getSuperclass());
     }
@@ -45,7 +50,7 @@ public final class Facade {
         enhancer.setSuperclass(superclass);
 
         // ... specify set of interfaces to be implemented by the proxy, ...
-        enhancer.setInterfaces(superclass.isInterface() ? new Class[] {superclass} : superclass.getInterfaces());
+        enhancer.setInterfaces(determineInterfaces(superclass));
 
         // ... define the type of callback to be used, ...
         enhancer.setCallbackType(DelegatingMethodInterceptor.class);
