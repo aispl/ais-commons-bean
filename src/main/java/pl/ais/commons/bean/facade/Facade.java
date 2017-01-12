@@ -6,9 +6,11 @@ import org.objenesis.ObjenesisHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+import java.util.Arrays;
 
 import static pl.ais.commons.bean.facade.ClassPredicates.inheritable;
 import static pl.ais.commons.bean.facade.ClassPredicates.is;
+import static pl.ais.commons.bean.facade.FieldPredicates.staticField;
 
 /**
  * Provides set of methods usable for creating facades.
@@ -21,6 +23,21 @@ public final class Facade {
 
     private Facade() {
         throw new AssertionError("Creation of " + getClass().getName() + " instances is forbidden.");
+    }
+
+    @SuppressWarnings("PMD.EmptyCatchBlock")
+    private static <T> void copyFieldsDeclaredBy(final @Nonnull T instance, final T proxy) {
+        final Class<?> instanceClass = instance.getClass();
+        Arrays.stream(instanceClass.getDeclaredFields())
+              .filter(staticField().negate())
+              .forEachOrdered(field -> {
+                  try {
+                      field.setAccessible(true);
+                      field.set(proxy, field.get(instance));
+                  } catch (final IllegalAccessException exception) {
+                      // Ignore ...
+                  }
+              });
     }
 
     private static <T> Class[] determineInterfaces(final Class<T> aClass) {
@@ -61,10 +78,11 @@ public final class Facade {
 
         // Now prepare to create an instance of the proxied class, register callbacks and the class loader, ...
         Enhancer.registerCallbacks(proxiedClass, new Callback[] {new DelegatingMethodInterceptor(instance, listener)});
-        enhancer.setClassLoader(superclass.getClassLoader());
 
         // ... and do the dirty work.
-        return ObjenesisHelper.newInstance(proxiedClass);
+        final T proxy = ObjenesisHelper.newInstance(proxiedClass);
+        copyFieldsDeclaredBy(instance, proxy);
+        return proxy;
     }
 
 }
