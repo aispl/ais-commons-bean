@@ -25,14 +25,27 @@ final class ClassPredicates {
         };
     }
 
+    /**
+     * Verifies if candidate class matches the predicate.
+     *
+     * @param candidate candidate class
+     * @param predicate predicate to be matched
+     * @return {code true} if candidate class matches the predicate, {@code false} otherwise
+     */
     public static boolean is(final Class<?> candidate, final Predicate<Class<?>> predicate) {
         return predicate.test(candidate);
     }
 
+    /**
+     * @return Predicate matched by classes being CGLIB proxies
+     */
     public static Predicate<Class<?>> proxyClass() {
         return candidate -> Factory.class.isAssignableFrom(candidate);
     }
 
+    /**
+     * @return Predicate matched by classes being inheritable, and not proxied already
+     */
     public static Predicate<Class<?>> proxyable() {
         return inheritable().and(proxyClass().negate());
     }
