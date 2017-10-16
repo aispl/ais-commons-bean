@@ -39,17 +39,14 @@ public final class ValidationContext<T> implements AutoCloseable, ValidationList
      * @param object the object which will be validated
      */
     private ValidationContext(final T object) {
-        this(null, object);
+        this(object, null, null);
     }
 
-    /**
-     * Constructs new instance.
-     *
-     * @param object the object which will be validated
-     */
-    private ValidationContext(final String basePath, final T object) {
+    private ValidationContext(final T object, final String basePath, final ValidationListener[] listeners) {
         super();
         traverseListener = new TraverseListener(basePath);
+
+        this.listeners = (null == listeners) ? null : listeners.clone();
         target = Facade.over(object, traverseListener);
     }
 
@@ -107,7 +104,10 @@ public final class ValidationContext<T> implements AutoCloseable, ValidationList
      */
     @Override
     public void constraintViolated(@Nonnull final ConstraintViolated event) {
-        Arrays.stream(listeners).forEachOrdered(listeners -> listeners.constraintViolated(event));
+        if (null != listeners) {
+            Arrays.stream(listeners)
+                  .forEachOrdered(listener -> listener.constraintViolated(event));
+        }
     }
 
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
@@ -115,7 +115,7 @@ public final class ValidationContext<T> implements AutoCloseable, ValidationList
         final String basePath = traverseListener.asPath();
         final Iterator<V> element = elements.iterator();
         for (int i = 0; element.hasNext(); i++) {
-            try (final ValidationContext<V> validateThat = new ValidationContext<>(String.format("%s[%d]", basePath, i), element.next()).observedBy(listeners)) {
+            try (final ValidationContext<V> validateThat = new ValidationContext<>(element.next(), String.format("%s[%d]", basePath, i), listeners)) {
                 delegate.accept(validateThat);
             }
         }
@@ -124,22 +124,24 @@ public final class ValidationContext<T> implements AutoCloseable, ValidationList
     public <V> void forEach(final Map<?, V> map, final Consumer<ValidationContext<V>> delegate) {
         final String basePath = traverseListener.asPath();
         map.forEach((key, value) -> {
-            try (final ValidationContext<V> validateThat = new ValidationContext<>(String.format("%s['%s']", basePath, key), value).observedBy(listeners)) {
+            try (final ValidationContext<V> validateThat = new ValidationContext<>(value, String.format("%s['%s']", basePath, key), listeners)) {
                 delegate.accept(validateThat);
             }
         });
     }
 
     /**
-     * Provides global validation listeners which will be used if there are no listeners defined
-     * at the specific {@link ConstrainableValue} level.
+     * Registers listeners interested in watching validation errors.
      *
-     * @param listeners listeners watching the constraint violations
+     * @param first first validation listener
+     * @param rest  the rest of validation listeners
      * @return this instance (for method invocation chaining)
      */
     @SuppressWarnings("hiding")
-    public ValidationContext<T> observedBy(@Nonnull final ValidationListener... listeners) {
-        this.listeners = Arrays.copyOf(listeners, listeners.length);
+    public ValidationContext<T> observedBy(final ValidationListener first, final ValidationListener... rest) {
+        listeners = new ValidationListener[1 + rest.length];
+        listeners[0] = first;
+        System.arraycopy(rest, 0, listeners, 1, rest.length);
         return this;
     }
 
