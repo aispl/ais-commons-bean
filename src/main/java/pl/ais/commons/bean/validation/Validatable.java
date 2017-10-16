@@ -2,7 +2,6 @@ package pl.ais.commons.bean.validation;
 
 import pl.ais.commons.bean.validation.constrainable.Constrainable;
 import pl.ais.commons.bean.validation.event.ValidationListener;
-import pl.ais.commons.domain.specification.Specifications;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,8 +37,7 @@ public interface Validatable<T> extends Supplier<Constrainable<T>> {
             public boolean satisfies(@Nonnull final Constraint<? super V> first, final Constraint<? super V>... rest) {
                 try {
                     return first.apply(constrainable, listener) && Arrays.stream(rest)
-                                                                         .map(constraint -> constraint.apply(constrainable, listener))
-                                                                         .allMatch(Specifications.isEqual(true));
+                                                                         .allMatch(constraint -> constraint.apply(constrainable, listener));
                 } finally {
                     if (null != callback) {
                         callback.run();
