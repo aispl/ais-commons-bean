@@ -27,14 +27,18 @@ public final class Facade {
 
     @SuppressWarnings("PMD.EmptyCatchBlock")
     private static <T> void copyFieldsDeclaredBy(final @Nonnull T instance, final T proxy) {
+
+        // For each field declared by instance class, except the static fields, ...
         final Class<?> instanceClass = instance.getClass();
         Arrays.stream(instanceClass.getDeclaredFields())
               .filter(staticField().negate())
-              .forEachOrdered(field -> {
+              .forEachOrdered(field ->
+              {
                   try {
+                      // ... try to copy value from the instance to proxy.
                       field.setAccessible(true);
                       field.set(proxy, field.get(instance));
-                  } catch (final IllegalAccessException exception) {
+                  } catch (final IllegalAccessException | IllegalArgumentException exception) {
                       // Ignore ...
                   }
               });
