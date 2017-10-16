@@ -15,8 +15,9 @@
         <exclude name="AvoidFinalLocalVariable" />
         <exclude name="AvoidLiteralsInIfCondition" />
         <exclude name="DataflowAnomalyAnalysis" />
+        <exclude name="NullAssignment" />
         <exclude name="UnnecessaryConstructor" />
-        <exclude name="UseConcurrentHashMap" />
+        <exclude name="UseConcurrentHashMap" />         
     </rule>
 
     <rule ref="rulesets/java/coupling.xml">
@@ -26,6 +27,7 @@
 
     <rule ref="rulesets/java/design.xml">
         <exclude name="FieldDeclarationsShouldBeAtStartOfClass" />
+        <exclude name="UseVarargs" />
     </rule>
 
     <rule ref="rulesets/java/empty.xml" />
