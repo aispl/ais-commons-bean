@@ -21,13 +21,13 @@ import java.util.stream.Collectors;
  * @since 1.2.1
  */
 @Immutable
-public final class AnyOfConstraint<T> extends AbstractConstraint<AnyOfConstraint<T>, T> {
+public final class AnyOfConstraint<T> extends AbstractConstraint<T> {
 
-    private final Constraint<?, T>[] constraints;
+    private final Constraint<T>[] constraints;
 
     private final boolean thorough;
 
-    private AnyOfConstraint(@Nonnull final String name, final Constraint<?, T>[] constraints, final boolean active,
+    private AnyOfConstraint(@Nonnull final String name, final Constraint<T>[] constraints, final boolean active,
                             final boolean thorough, @Nonnull final Object[] messageParameters, @Nullable final String message) {
         super(name, active, messageParameters, message);
 
@@ -45,7 +45,7 @@ public final class AnyOfConstraint<T> extends AbstractConstraint<AnyOfConstraint
      */
     @SuppressWarnings("unchecked")
     @SafeVarargs
-    public AnyOfConstraint(final boolean thorough, @Nonnull final Constraint<?, T> first, final Constraint<?, T>... rest) {
+    public AnyOfConstraint(final boolean thorough, @Nonnull final Constraint<T> first, final Constraint<T>... rest) {
         super("disjunction", true, ZERO_LENGTH_ARRAY, null);
 
         // Verify constructor requirements, ...
@@ -54,7 +54,7 @@ public final class AnyOfConstraint<T> extends AbstractConstraint<AnyOfConstraint
         // ... and initialize this instance fields.
         this.thorough = thorough;
 
-        constraints = (Constraint<?, T>[]) Array.newInstance(Constraint.class, rest.length + 1);
+        constraints = (Constraint<T>[]) Array.newInstance(Constraint.class, rest.length + 1);
         constraints[0] = first;
         System.arraycopy(rest, 0, constraints, 1, rest.length);
     }
@@ -69,7 +69,7 @@ public final class AnyOfConstraint<T> extends AbstractConstraint<AnyOfConstraint
         processing:
         {
             // Walk through the constraints, ...
-            for (final Constraint<?, T> constraint : constraints) {
+            for (final Constraint<T> constraint : constraints) {
 
                 // ... skip all inactive, ...
                 if (!constraint.isActive()) {
@@ -117,7 +117,7 @@ public final class AnyOfConstraint<T> extends AbstractConstraint<AnyOfConstraint
      * {@inheritDoc}
      */
     @Override
-    public Constraint<?, T> negate() {
+    public Constraint<T> negate() {
         return new SimpleConstraint<>(getNegatedName(), candidate -> !test(candidate));
     }
 

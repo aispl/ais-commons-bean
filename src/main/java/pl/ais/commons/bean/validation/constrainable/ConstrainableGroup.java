@@ -45,7 +45,7 @@ public abstract class ConstrainableGroup<T> implements Constrainable<T> {
              * {@inheritDoc}
              */
             @Override
-            public Boolean apply(final Constraint<?, ? super T> constraint) {
+            public Boolean apply(final Constraint<? super T> constraint) {
                 return elements.stream()
                                .allMatch(constraint::test);
             }
@@ -82,7 +82,7 @@ public abstract class ConstrainableGroup<T> implements Constrainable<T> {
              * {@inheritDoc}
              */
             @Override
-            public Boolean apply(final Constraint<?, ? super T> constraint) {
+            public Boolean apply(final Constraint<? super T> constraint) {
                 return elements.stream()
                                .anyMatch(constraint::test);
             }

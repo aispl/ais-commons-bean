@@ -16,7 +16,7 @@ import java.util.function.Function;
  * @author Warlock, AIS.PL
  * @since 1.2.1
  */
-public interface Constrainable<T> extends Function<Constraint<?, ? super T>, Boolean> {
+public interface Constrainable<T> extends Function<Constraint<? super T>, Boolean> {
 
     /**
      * Accepts given visitor.
@@ -34,6 +34,6 @@ public interface Constrainable<T> extends Function<Constraint<?, ? super T>, Boo
      * @return {@code true} if given constraint is satisfied by this constrainable, {@code false} otherwise
      */
     @Override
-    Boolean apply(Constraint<?, ? super T> constraint);
+    Boolean apply(Constraint<? super T> constraint);
 
 }

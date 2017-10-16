@@ -16,7 +16,7 @@ import java.util.function.Predicate;
  * @since 1.2.1
  */
 @Immutable
-public final class SimpleConstraint<T> extends AbstractConstraint<SimpleConstraint<T>, T> {
+public final class SimpleConstraint<T> extends AbstractConstraint<T> {
 
     private final Predicate<T> determinant;
 
@@ -65,7 +65,7 @@ public final class SimpleConstraint<T> extends AbstractConstraint<SimpleConstrai
     }
 
     @Override
-    public Constraint<?, T> negate() {
+    public Constraint<T> negate() {
         return new SimpleConstraint<>(getNegatedName(), determinant.negate());
     }
 

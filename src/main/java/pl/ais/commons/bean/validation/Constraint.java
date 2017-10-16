@@ -12,12 +12,11 @@ import java.util.function.BiFunction;
 /**
  * Defines the API contract for the Constraint.
  *
- * @param <C> the type of constraint
  * @param <T> the type of values supported by the constraint
  * @author Warlock, AIS.PL
  * @since 1.2.1
  */
-public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Constrainable<? extends T>, ValidationListener, Boolean> {
+public interface Constraint<T> extends BiFunction<Constrainable<? extends T>, ValidationListener, Boolean> {
 
     /**
      * Creates and returns composite constraint being conjunction of this and provided constraint.
@@ -25,7 +24,7 @@ public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Co
      * @param other constraint to be used for building conjunction with this one
      * @return constraint being conjunction of this and provided constraint
      */
-    Constraint<?, T> and(@Nonnull final Constraint<?, T> other);
+    Constraint<T> and(@Nonnull final Constraint<T> other);
 
     /**
      * Verifies if given constrainable matches the constraint and reports violation if needed.
@@ -92,7 +91,7 @@ public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Co
      *
      * @return constraint being negation of this one
      */
-    Constraint<?, T> negate();
+    Constraint<T> negate();
 
     /**
      * Creates and returns composite constraint being disjunction of this one and provided constraint.
@@ -100,7 +99,7 @@ public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Co
      * @param other constraint to be used for building disjunction with this one
      * @return constraint being disjunction of this one and provided constraint
      */
-    Constraint<?, T> or(@Nonnull final Constraint<?, T> other);
+    Constraint<T> or(@Nonnull final Constraint<T> other);
 
     /**
      * Evaluates this constraint on the given argument.
@@ -120,7 +119,7 @@ public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Co
      * @return constraint instance (for method invocation chaining)
      */
     @Nonnull
-    C when(boolean active);
+    Constraint<T> when(boolean active);
 
     /**
      * Provides the message (potentially parametrized) which should be used to describe the constraint.
@@ -130,7 +129,7 @@ public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Co
      * @return constraint instance (for method invocation chaining)
      */
     @Nonnull
-    C withDescription(@Nonnull String message, Object... messageParameters);
+    Constraint<T> withDescription(@Nonnull String message, Object... messageParameters);
 
     /**
      * Provides the message parameters which should be used to describe the constraint.
@@ -139,6 +138,6 @@ public interface Constraint<C extends Constraint<C, T>, T> extends BiFunction<Co
      * @return constraint instance (for method invocation chaining)
      */
     @Nonnull
-    C withMessageParameters(Object... messageParameters);
+    Constraint<T> withMessageParameters(Object... messageParameters);
 
 }

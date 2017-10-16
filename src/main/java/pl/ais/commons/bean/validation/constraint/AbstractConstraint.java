@@ -13,7 +13,7 @@ import java.util.Objects;
  * @author Warlock, AIS.PL
  * @since 1.2.1
  */
-abstract class AbstractConstraint<C extends Constraint<C, T>, T> implements Constraint<C, T> {
+abstract class AbstractConstraint<T> implements Constraint<T> {
 
     protected static final Object[] ZERO_LENGTH_ARRAY = new Object[0];
 
@@ -38,8 +38,7 @@ abstract class AbstractConstraint<C extends Constraint<C, T>, T> implements Cons
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public Constraint<?, T> and(@Nonnull final Constraint<?, T> other) {
+    public Constraint<T> and(@Nonnull final Constraint<T> other) {
         Objects.requireNonNull(other, "Constraint is required.");
         return new AllOfConstraint<>(false, this, other);
     }
@@ -80,7 +79,7 @@ abstract class AbstractConstraint<C extends Constraint<C, T>, T> implements Cons
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public Constraint<?, T> or(@Nonnull final Constraint<?, T> other) {
+    public Constraint<T> or(@Nonnull final Constraint<T> other) {
         Objects.requireNonNull(other, "Constraint is required.");
         return new AnyOfConstraint<>(false, this, other);
     }

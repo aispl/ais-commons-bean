@@ -47,7 +47,7 @@ public final class ConstrainableValue<T> implements Constrainable<T> {
      * {@inheritDoc}
      */
     @Override
-    public Boolean apply(final Constraint<?, ? super T> constraint) {
+    public Boolean apply(final Constraint<? super T> constraint) {
         return constraint.test(value);
     }
 

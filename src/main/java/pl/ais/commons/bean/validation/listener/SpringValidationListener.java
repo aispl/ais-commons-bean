@@ -36,7 +36,7 @@ public final class SpringValidationListener implements ValidationListener {
      */
     @Override
     public void constraintViolated(final ConstraintViolated event) {
-        final Constraint<?, ?> constraint = event.getSource();
+        final Constraint<?> constraint = event.getSource();
         final Constrainable<?> offender = event.getOffender();
         offender.accept(new ErrorReportingVisitor(constraint));
     }
@@ -44,9 +44,9 @@ public final class SpringValidationListener implements ValidationListener {
     @SuppressWarnings("PMD.NullAssignment")
     private class ErrorReportingVisitor implements ConstrainableVisitor<Void> {
 
-        private final Constraint<?, ?> constraint;
+        private final Constraint<?> constraint;
 
-        ErrorReportingVisitor(final Constraint<?, ?> constraint) {
+        ErrorReportingVisitor(final Constraint<?> constraint) {
             this.constraint = constraint;
         }
 

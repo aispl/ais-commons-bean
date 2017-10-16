@@ -35,7 +35,7 @@ public interface Validatable<T> extends Supplier<Constrainable<T>> {
              * {@inheritDoc}
              */
             @Override
-            public boolean satisfies(@Nonnull final Constraint<?, ? super V> first, final Constraint<?, ? super V>... rest) {
+            public boolean satisfies(@Nonnull final Constraint<? super V> first, final Constraint<? super V>... rest) {
                 try {
                     return first.apply(constrainable, listener) && Arrays.stream(rest)
                                                                          .map(constraint -> constraint.apply(constrainable, listener))
@@ -56,6 +56,6 @@ public interface Validatable<T> extends Supplier<Constrainable<T>> {
      * @param rest  remaining constraints which should be satisfied
      * @return {@code true} if all constraints are satisfied by this validatable, {@code false} otherwise
      */
-    boolean satisfies(@Nonnull Constraint<?, ? super T> first, Constraint<?, ? super T>... rest);
+    boolean satisfies(@Nonnull Constraint<? super T> first, Constraint<? super T>... rest);
 
 }

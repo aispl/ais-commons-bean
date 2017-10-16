@@ -24,7 +24,7 @@ public final class ConstraintViolated extends EventObject {
      * @param constraint violated constraint
      * @param offender   the constrainable which violated the constraint
      */
-    public ConstraintViolated(final Constraint<?, ?> constraint, final Constrainable<?> offender) {
+    public ConstraintViolated(final Constraint<?> constraint, final Constrainable<?> offender) {
         super(constraint);
         this.offender = offender;
     }
@@ -55,7 +55,7 @@ public final class ConstraintViolated extends EventObject {
      */
     @SuppressWarnings("rawtypes")
     @Override
-    public Constraint<?, ?> getSource() {
+    public Constraint<?> getSource() {
         return (Constraint) source;
     }
 
