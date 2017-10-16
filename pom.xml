@@ -40,11 +40,11 @@
     </developers>
 
     <properties>
-        <asm.version>5.0.4</asm.version>
-        <cglib.version>3.1</cglib.version>
-        <objenesis.version>2.2</objenesis.version>
-        <powermock.version>1.6.3</powermock.version>
-        <spring.version>4.2.1.RELEASE</spring.version>
+        <asm.version>5.2</asm.version>
+        <cglib.version>3.2.5</cglib.version>
+        <objenesis.version>2.6</objenesis.version>
+        <powermock.version>1.7.3</powermock.version>
+        <spring.version>4.3.12.RELEASE</spring.version>
     </properties>
 
     <distributionManagement>
@@ -109,7 +109,7 @@
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
-            <version>3.0.0</version>
+            <version>3.0.1</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -120,7 +120,7 @@
         <dependency>
             <groupId>org.javamoney</groupId>
             <artifactId>moneta</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -141,7 +141,7 @@
         <dependency>
             <groupId>pl.ais.commons</groupId>
             <artifactId>ais-commons-domain</artifactId>
-            <version>1.2.2</version>
+            <version>1.2.3</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -151,19 +151,19 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.10.19</version>
+            <artifactId>mockito-core</artifactId>
+            <version>2.11.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.1.0</version>
+            <version>3.8.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito</artifactId>
+            <artifactId>powermock-api-mockito2</artifactId>
             <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
