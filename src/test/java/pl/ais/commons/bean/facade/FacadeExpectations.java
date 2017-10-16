@@ -47,8 +47,8 @@ public class FacadeExpectations {
         holder.setNestedInstance(nestedInstance);
 
         final ValueHolder facade = Facade.over(holder, new TraverseListener());
-        assertEquals(facade.instanceValue, holder.instanceValue);
-        assertEquals(facade.nestedInstance, holder.nestedInstance);
+        assertEquals(holder.instanceValue, facade.instanceValue);
+        assertEquals(holder.nestedInstance, facade.nestedInstance);
         assertNull(((BaseValueHolder) facade).inheritedValue);
     }
 

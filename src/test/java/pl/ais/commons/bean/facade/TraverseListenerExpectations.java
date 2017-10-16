@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static pl.ais.commons.bean.domain.model.Activity.anActivity;
+
 /**
  * Verifies the traverse listener expectations.
  *
@@ -93,8 +95,8 @@ public class TraverseListenerExpectations {
         // Given bean instance, bean property traverse listener, and facade built over the bean.
         final Person person = new Person();
         final List<Activity> activities = new ArrayList<>();
-        activities.add(new Activity());
-        activities.add(new Activity());
+        activities.add(anActivity().get());
+        activities.add(anActivity().get());
         person.setActivities(activities);
 
         final TraverseListener listener = new TraverseListener();
@@ -116,8 +118,8 @@ public class TraverseListenerExpectations {
         // Given bean instance, bean property traverse listener, and facade built over the bean.
         final Person person = new Person();
         final List<Activity> activities = new ArrayList<>();
-        activities.add(new Activity());
-        activities.add(new Activity());
+        activities.add(anActivity().get());
+        activities.add(anActivity().get());
         person.setActivities(activities);
 
         final TraverseListener listener = new TraverseListener();

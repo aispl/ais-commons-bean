@@ -1,6 +1,7 @@
 package pl.ais.commons.bean.domain.model;
 
 import java.time.LocalDateTime;
+import java.util.function.Supplier;
 
 /**
  * @author Warlock, AIS.PL
@@ -8,11 +9,21 @@ import java.time.LocalDateTime;
  */
 public class Activity {
 
-    private LocalDateTime end;
+    private final LocalDateTime end;
 
-    private String name;
+    private final String name;
 
-    private LocalDateTime start;
+    private final LocalDateTime start;
+
+    Activity(final Builder builder) {
+        end = builder.end;
+        name = builder.name;
+        start = builder.start;
+    }
+
+    public static Builder anActivity() {
+        return new Builder();
+    }
 
     public LocalDateTime getEnd() {
         return end;
@@ -26,16 +37,34 @@ public class Activity {
         return start;
     }
 
-    public void setEnd(final LocalDateTime end) {
-        this.end = end;
-    }
+    public static class Builder implements Supplier<Activity> {
 
-    public void setName(final String name) {
-        this.name = name;
-    }
+        private LocalDateTime end;
 
-    public void setStart(final LocalDateTime start) {
-        this.start = start;
+        private String name;
+
+        private LocalDateTime start;
+
+        public Builder finished(final LocalDateTime end) {
+            this.end = end;
+            return this;
+        }
+
+        @Override
+        public Activity get() {
+            return new Activity(this);
+        }
+
+        public Builder named(final String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder started(final LocalDateTime start) {
+            this.start = start;
+            return this;
+        }
+
     }
 
 }

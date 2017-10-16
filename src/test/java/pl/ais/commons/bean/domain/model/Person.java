@@ -1,7 +1,6 @@
 package pl.ais.commons.bean.domain.model;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +11,8 @@ import java.util.Map;
 public class Person {
 
     private List<Activity> activities;
+
+    private Map<String, Activity> activitiesMap;
 
     private Map<String, Integer> colleagues;
 
@@ -27,6 +28,10 @@ public class Person {
 
     public List<Activity> getActivities() {
         return activities;
+    }
+
+    public Map<String, Activity> getActivitiesMap() {
+        return activitiesMap;
     }
 
     public Map<String, Integer> getColleagues() {
@@ -55,6 +60,10 @@ public class Person {
 
     public void setActivities(final List<Activity> activities) {
         this.activities = activities;
+    }
+
+    public void setActivitiesMap(final Map<String, Activity> activitiesMap) {
+        this.activitiesMap = activitiesMap;
     }
 
     public void setColleagues(final Map<String, Integer> colleagues) {
