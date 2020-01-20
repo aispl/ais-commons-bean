@@ -41,7 +41,7 @@
 
     <properties>
         <asm.version>7.0</asm.version>
-        <cglib.version>3.2.9</cglib.version>
+        <cglib.version>3.3.0</cglib.version>
         <objenesis.version>3.0.1</objenesis.version>
         <powermock.version>1.7.4</powermock.version>
         <spring.version>4.3.20.RELEASE</spring.version>
