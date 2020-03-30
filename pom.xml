@@ -40,7 +40,7 @@
     </developers>
 
     <properties>
-        <asm.version>7.3.1</asm.version>
+        <asm.version>8.0</asm.version>
         <cglib.version>3.3.0</cglib.version>
         <objenesis.version>3.0.1</objenesis.version>
         <powermock.version>2.0.4</powermock.version>
